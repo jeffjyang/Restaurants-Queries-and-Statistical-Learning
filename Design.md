@@ -4,7 +4,6 @@ Database Design
 ## Datatypes:
 
 ### Restaurant
-
 ##### Representation:
 - All attributes in JSON
 Rep invariant:
@@ -23,7 +22,6 @@ Abstraction function:
 - modifiers for name, address, categories
 
 ### Review
-
 ##### Representation:
 - All attributes in JSON
 Rep invariant:
@@ -40,7 +38,6 @@ Abstraction function:
 
 
 ### User
-
 ##### Representation:
 - All attributes in JSON
 Rep invariant:
@@ -55,7 +52,6 @@ Abstraction function:
 
 
 ### Database
-
 ##### Representation:
 - Set of all Restaurant, Review, and User
 Rep invariant:

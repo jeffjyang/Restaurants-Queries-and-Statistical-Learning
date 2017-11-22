@@ -3,7 +3,7 @@ Database Design
 
 ## Datatypes:
 
-#### Restaurant
+### Restaurant
 
 ##### Representation:
 - All attributes in JSON
@@ -22,7 +22,7 @@ Abstraction function:
 - observer for getting the average rating
 - modifiers for name, address, categories
 
-#### Review
+### Review
 
 ##### Representation:
 - All attributes in JSON
@@ -33,15 +33,15 @@ Rep invariant:
 - text is a String between 0 and UPPERLIMIT characters
 Abstraction function:
 - represents a user review for an restaurants
-#####Methods:
+##### Methods:
 - observers for all fields
 - modifiers for text, stars, votes  
 - constructor
 
 
-####User
+### User
 
-#####Representation:
+##### Representation:
 - All attributes in JSON
 Rep invariant:
 - average_starts is the sum of all review stars divided by number of reviews
@@ -53,18 +53,9 @@ Abstraction function:
 - observers for all fields
 - modifiers for name, votes
 
-#### Categories
-##### Representation:
-- All attributes in JSON
-Representation:
-- is not null
-- String representing a restaurant category
-Abstraction function:
-- represents a restaurants category
-##### Methods:
-- observers for all fields  
 
-#### Database
+### Database
+
 ##### Representation:
 - Set of all Restaurant, Review, and User
 Rep invariant:

@@ -3,9 +3,9 @@ Database Design
 
 ## Datatypes:
 
-####Restaurant
+#### Restaurant
 
-#####Representation:
+##### Representation:
 - All attributes in JSON
 Rep invariant:
 - is not null
@@ -17,14 +17,14 @@ Rep invariant:
 - schools will not change
 Abstraction function:
 - Represents a restaurants in the Yelp dataset
-#####Methods:
+##### Methods:
 - observers for all fields  
 - observer for getting the average rating
 - modifiers for name, address, categories
 
-####Review
+#### Review
 
-#####Representation:
+##### Representation:
 - All attributes in JSON
 Rep invariant:
 - business_id, user_id, review_id will not change
@@ -49,30 +49,30 @@ Rep invariant:
 - user_id will not change
 Abstraction function:
 - Represents a user
-#####Methods:
+##### Methods:
 - observers for all fields
 - modifiers for name, votes
 
-####Categories
-#####Representation:
+#### Categories
+##### Representation:
 - All attributes in JSON
 Representation:
 - is not null
 - String representing a restaurant category
 Abstraction function:
 - represents a restaurants category
-#####Methods:
+##### Methods:
 - observers for all fields  
 
-####Database
-#####Representation:
+#### Database
+##### Representation:
 - Set of all Restaurant, Review, and User
 Rep invariant:
 - Sets are composed of Restaurant, Review, and User objects
 - Sets are not null
 Abstraction function:
 - Represents the Yelp database  
-#####Methods:
+##### Methods:
 - observers for all fields
 - add new user, restaurant and rating
 - get restaurant by rating, price, neighbourhood hood etc.

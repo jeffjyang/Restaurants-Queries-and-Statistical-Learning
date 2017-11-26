@@ -13,10 +13,9 @@ public class YelpUser implements User {
     private String type;
     private String userId;
     private String name;
-    private double averageStars;			// TODO averageStars 
+    private double averageStars;			// TODO update averageStars 
     
-    private List<YelpReview> reviews;		// TODO move reviews to a generic in User interface??????????????
-    						// TODO yelpreview to review ids??????????
+    private List<String> reviews;		// TODO move reviews to a generic in User interface??????????????
     
     public YelpUser(String url, Map<String, Integer> votes, int reviewCount, String type, String userId, String name,
 	    double averageStars) {
@@ -36,20 +35,20 @@ public class YelpUser implements User {
     }
 
     
-    public void addReview(YelpReview review) {
+    public void addReview(String review) {
 	reviews.add(review);
 	reviewCount ++;
     }
     
-    public List<YelpReview> getReviews() {
-	List<YelpReview> reviewsCopy = new ArrayList<>();
-	for (YelpReview review : reviews) {
+    public List<String> getReviews() {
+	List<String> reviewsCopy = new ArrayList<>();
+	for (String review : reviews) {
 	    reviewsCopy.add(review);
 	}
 	return reviewsCopy;
     }
     
-    public boolean removeReview(YelpReview review) {
+    public boolean removeReview(String review) {
 	if (reviews.remove(review)) {
 	    reviewCount--;
 	    return true;

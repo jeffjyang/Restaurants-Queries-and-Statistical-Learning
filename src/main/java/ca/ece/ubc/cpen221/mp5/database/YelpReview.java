@@ -11,12 +11,10 @@ public class YelpReview implements Review{
     private String reviewId;		
     private String text;
     private int stars;
-    private String userId;		// TODO
+    private String userId;		
     private String date;
     
-    private YelpUser user;				// TODO remove?????????
-    private YelpRestaurant restaurant;
-    
+ 
     
     public YelpReview() {}
     
@@ -39,16 +37,6 @@ public class YelpReview implements Review{
     }
 
 
-    public void setRestaurant(YelpRestaurant restaurant) {
-	this.restaurant = restaurant;
-    }
-    
-    public void setUser(YelpUser user) {
-	this.user = user;
-	this.userId = user.getUserId();
-    }
-    
-    
 
 
     @Override
@@ -80,9 +68,6 @@ public class YelpReview implements Review{
     
     // getters 
     
-    public YelpUser getUser() {
-	return user;
-    }
     
     public String getReview() {
         return review;
@@ -91,10 +76,7 @@ public class YelpReview implements Review{
     public String getBusinessId() {
         return businessId;
     }
-    
-    public YelpRestaurant getRestaurant() {
-	return restaurant;
-    }
+
 
     public Map<String, Integer> getVotes() {
 	Map<String, Integer> votesCopy = new HashMap<>();

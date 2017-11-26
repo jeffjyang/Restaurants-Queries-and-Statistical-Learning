@@ -21,4 +21,5 @@ public interface User {
      */
     public void setName(String name);
     
+    
 }

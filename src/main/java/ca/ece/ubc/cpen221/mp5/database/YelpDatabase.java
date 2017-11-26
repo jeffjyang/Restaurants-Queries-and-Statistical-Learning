@@ -8,7 +8,7 @@ import java.util.function.ToDoubleBiFunction;
 import ca.ece.ubc.cpen221.mp5.MP5Db;
 
 public class YelpDatabase implements MP5Db<Review>{
-	private Set<Restaurant> restaurants;
+	private Set<YelpRestaurant> restaurants;
 	private Set<User> users;
 	private Set<Review> reviews;
 	

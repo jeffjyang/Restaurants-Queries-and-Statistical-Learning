@@ -3,6 +3,9 @@ package ca.ece.ubc.cpen221.mp5.database;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.json.JsonObject;
+import javax.json.JsonValue;
+
 public class YelpRestaurant implements Business{
 
     private boolean open;
@@ -25,27 +28,23 @@ public class YelpRestaurant implements Business{
 
     private List<YelpReview> reviews;		// TODO change YelpReview to review ids? 
     
-    public YelpRestaurant() {
-    }
 
     // TODO lmao no way this is right 
-    public YelpRestaurant(boolean open, String url, double longitude, List<String> neighborhoods, String businessId,
-	    String name, List<String> categories, String state, String type, int stars, String city,
-	    String fullAddress, int reviewCount, String photoUrl, List<String> schools, double latitude, int price) {
-	this.open = open;
-	this.url = url;
-	this.longitude = longitude;
-	this.businessId = businessId;
-	this.name = name;
-	this.state = state;
-	this.type = type;
-	this.stars = stars;
-	this.city = city;
-	this.fullAddress = fullAddress;
-	this.reviewCount = reviewCount;
-	this.photoUrl = photoUrl;
-	this.latitude = latitude;
-	this.price = price;
+    public YelpRestaurant(JsonObject obj) {
+	this.open = (Boolean) obj.getBoolean("open");
+	this.url = obj.getString("url");
+	this.longitude = Double.parseDouble(obj.getString("longitude"));
+	this.businessId = obj.getString("businessId");
+	this.name = obj.getString("name");
+	this.state = obj.getString("state");
+	this.type = obj.getString("type");
+	this.stars = obj.getInt("stars");
+	this.city = obj.getString("city");
+	this.fullAddress = obj.getString("fullAddress");
+	this.reviewCount = obj.getInt("reviewCount");
+	this.photoUrl = obj.getString("photoUrl");
+	this.latitude = Double.parseDouble(obj.getString("latitude"));
+	this.price = obj.getInt("price");
 
 
 	this.neighborhoods = new ArrayList<>();

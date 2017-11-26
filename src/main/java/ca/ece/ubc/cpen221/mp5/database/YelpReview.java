@@ -3,6 +3,8 @@ package ca.ece.ubc.cpen221.mp5.database;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.json.JsonObject;
+
 public class YelpReview implements Review{
 
     private String review;
@@ -18,17 +20,14 @@ public class YelpReview implements Review{
     private YelpRestaurant restaurant;
     
     
-    public YelpReview() {}
-    
-    public YelpReview(String review, String businessId, Map<String, Integer> votes, String reviewId, String text,
-	    int stars, String userId, String date) {
-	this.review = review;
-	this.businessId = businessId;
-	this.reviewId = reviewId;
-	this.text = text;
-	this.stars = stars;
-	this.date = date;
-	this.userId = userId;
+    public YelpReview(JsonObject obj) { //NEED TO IMPLEMENET ARRAYS
+	this.review = obj.getString("review");
+	this.businessId = obj.getString("businessId");
+	this.reviewId = obj.getString("reviewId");
+	this.text = obj.getString("text");
+	this.stars = obj.getInt("stars");
+	this.date = obj.getString("date");
+	this.userId = obj.getString("userId");
 
 	
 	this.votes = new HashMap<>();

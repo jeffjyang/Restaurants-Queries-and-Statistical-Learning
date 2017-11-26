@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.json.JsonObject;
+
 public class YelpUser implements User {
 
     private String url;
@@ -18,14 +20,13 @@ public class YelpUser implements User {
     private List<YelpReview> reviews;		// TODO move reviews to a generic in User interface??????????????
     						// TODO yelpreview to review ids??????????
     
-    public YelpUser(String url, Map<String, Integer> votes, int reviewCount, String type, String userId, String name,
-	    double averageStars) {
-	this.url = url;
-	this.reviewCount = reviewCount;
-	this.type = type;
-	this.userId = userId;
-	this.name = name;
-	this.averageStars = averageStars;
+    public YelpUser(JsonObject obj) {
+	this.url = obj.getString("url");
+	this.reviewCount = obj.getInt("reviewCount");
+	this.type = obj.getString("type");
+	this.userId = obj.getString("userId");
+	this.name = obj.getString("name");
+	this.averageStars = obj.getInt("averageStars");
 	
 	this.votes = new HashMap<>();
 	for (String category : votes.keySet()) {

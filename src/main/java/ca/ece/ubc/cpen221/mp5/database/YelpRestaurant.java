@@ -26,7 +26,7 @@ public class YelpRestaurant implements Business{
     private double latitude;
     private int price;
 
-    private List<YelpReview> reviews;		// TODO change YelpReview to review ids? 
+    private List<String> reviews;		// TODO change YelpReview to review ids? 
     
 
     // TODO lmao no way this is right 
@@ -66,20 +66,20 @@ public class YelpRestaurant implements Business{
     }
 
     
-    public void addReview(YelpReview review) {
+    public void addReview(String review) {
   	reviews.add(review);
   	reviewCount ++;
       }
       
-      public List<YelpReview> getReviews() {
-  	List<YelpReview> reviewsCopy = new ArrayList<>();
-  	for (YelpReview review : reviews) {
+      public List<String> getReviews() {
+  	List<String> reviewsCopy = new ArrayList<>();
+  	for (String review : reviews) {
   	    reviewsCopy.add(review);
   	}
   	return reviewsCopy;
       }
       
-      public boolean removeReview(YelpReview review) {
+      public boolean removeReview(String review) {
   	if (reviews.remove(review)) {
   	    reviewCount--;
   	    return true;

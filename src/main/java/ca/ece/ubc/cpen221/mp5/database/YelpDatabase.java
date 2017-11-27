@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.ToDoubleBiFunction;
@@ -53,17 +54,53 @@ public class YelpDatabase implements MP5Db<Review>{
 	@Override
 	public String kMeansClusters_json(int k) {
 		List<Set<YelpRestaurant>> clusterList = new ArrayList<>();
+		ArrayList<Coordinate> seeds = initializeSeeds(k);
 		
+		//Initializing all the cluster sets
+		for(int index = 0; index < k; index++) {
+			Set<YelpRestaurant> cluster = new HashSet<>();
+			clusterList.add(cluster);
+		}
 		
+		//Adding the restaurant to the cluster listing
+		for (YelpRestaurant restaurant: restaurants) {
+			int bestSeed = bestCluster(restaurant, seeds);
+			clusterList.get(bestSeed).add(restaurant);
+		}
 		
-		
-		return null;
+		return clusterList;
 	}
 	
-	private HashMap<Integer, Coordinate> initializeSeeds (int k) {
+	private int bestCluster(YelpRestaurant restaurant, ArrayList<Coordinate> seeds ) {
+		Coordinate restaurantCoord = new Coordinate(restaurant);
+		double minDist = Integer.MAX_VALUE; //Should be something else...
+		int bestSeed;
+		
+		for (int index = 0; index < seeds.size(); index++) {
+			Coordinate seedCord = seeds.get(index);
+			double distance = computeDistance(restaurantCoord, seedCord);
+			
+			if (distance < minDist) {
+				minDist = distance;
+				bestSeed = index;
+			}
+		}
+		
+		return bestSeed;
+	}
+	
+	private double computeDistance(Coordinate clusterCoord, Coordinate restaurantCoord) {
+		double yDist = clusterCoord.getLat() - restaurantCoord.getLat(); 
+		double xDist = clusterCoord.getLong() - restaurantCoord.getLong();
+		double distance = Math.pow((Math.pow(xDist, 2.0) + Math.pow(yDist, 2.0)), 0.5);
+		
+		return distance;
+	}
+	
+	private ArrayList<Coordinate> initializeSeeds (int k) {
 		Random randomGenerator = new Random();
 		List<YelpRestaurant> restaurantList = new ArrayList<>(restaurants);
-		HashMap<Integer, Coordinate> seeds = new HashMap<>();
+		ArrayList<Coordinate> seeds = new ArrayList<>();
 		Set<Coordinate> generatedCoords = new HashSet<>();
 
 		for (int index = 0; index < k; index++) {
@@ -71,7 +108,7 @@ public class YelpDatabase implements MP5Db<Review>{
 			int seedIndex = randomGenerator.nextInt(restaurants.size());
 			Coordinate coord = new Coordinate(restaurantList.get(seedIndex));
 			assert(!generatedCoords.contains(coord)); //Check for same coordinate not used for two seeds
-			seeds.put(index, coord);
+			seeds.add(coord);
 		}
 		
 		return seeds;

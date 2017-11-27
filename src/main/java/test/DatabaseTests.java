@@ -9,9 +9,9 @@ import org.junit.Test;
 import ca.ece.ubc.cpen221.mp5.database.YelpDatabase;
 import ca.ece.ubc.cpen221.mp5.database.YelpRestaurant;
 public class DatabaseTests {
-	String restaurantJSON = "data/restaurants.JSON";
-	String reviewJSON = "data/reviews.json";
-	String userJSON = "data/users.json";
+	private String restaurantJSON = "data/restaurants.JSON";
+	private String reviewJSON = "data/reviews.json";
+	private String userJSON = "data/users.json";
 	
 	Set<YelpRestaurant> restaurants;
 	@Test

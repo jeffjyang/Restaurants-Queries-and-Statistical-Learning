@@ -26,7 +26,7 @@ import javax.json.JsonWriter;
 
 import ca.ece.ubc.cpen221.mp5.MP5Db;
 
-public class YelpDatabase implements MP5Db<Review> {
+public class YelpDatabase implements MP5Db<YelpRestaurant> {
 	private Set<YelpRestaurant> restaurants;
 	private Set<User> users;
 	private Set<Review> reviews;
@@ -46,13 +46,13 @@ public class YelpDatabase implements MP5Db<Review> {
 	}
 
 	@Override
-	public Set<Review> getMatches(String queryString) {
+	public Set<YelpRestaurant> getMatches(String queryString) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public ToDoubleBiFunction<MP5Db<Review>, String> getPredictorFunction(String user) {
+	public ToDoubleBiFunction<MP5Db<YelpRestaurant>, String> getPredictorFunction(String user) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -87,7 +87,6 @@ public class YelpDatabase implements MP5Db<Review> {
 	}
 	
 	private String getJsonString(List<Set<YelpRestaurant>> clusterList) {
-		String jsonString = "";
 		Set<JsonObject> set = new HashSet<>(); 
 		JsonArray jsonArray = Json.createArrayBuilder().build();
 		

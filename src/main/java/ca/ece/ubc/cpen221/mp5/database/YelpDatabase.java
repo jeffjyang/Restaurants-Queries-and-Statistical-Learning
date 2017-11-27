@@ -26,10 +26,10 @@ import javax.json.JsonWriter;
 
 import ca.ece.ubc.cpen221.mp5.MP5Db;
 
-public class YelpDatabase implements MP5Db<YelpRestaurant> {
+public class YelpDatabase implements MP5Db<YelpUser> {
 	private Set<YelpRestaurant> restaurants;
-	private Set<User> users;
-	private Set<Review> reviews;
+	private Set<YelpUser> users;
+	private Set<YelpReview> reviews;
 
 	public YelpDatabase(String restaurantFileName, String reviewFileName, String userFileName) {
 		this.restaurants = Collections.synchronizedSet(new HashSet<>());
@@ -46,17 +46,82 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 	}
 
 	@Override
-	public Set<YelpRestaurant> getMatches(String queryString) {
+	public Set<YelpUser> getMatches(String queryString) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public ToDoubleBiFunction<MP5Db<YelpRestaurant>, String> getPredictorFunction(String user) {
-		// TODO Auto-generated method stub
+	public ToDoubleBiFunction<MP5Db<YelpUser>, String> getPredictorFunction(String user) {
+		YelpUser userObj = new YelpUser(null); //Null user throw exception?
+/*
+		//TODO: consider if user does not exist
+		for (YelpUser userItr: users) { //Gets the user from the userID
+			if (userItr.getUserId().equals(user))
+				userObj = userItr;
+		}
+
+		List<String> userReviews = userObj.getReviews();
+
+		//Converts the user review string list to list of review objects
+		for(YelpReview review: reviews) {
+		    if (userReviews.contains(review.get))
+        }
+
+
+		double Sxx = calculateSxx(); //x indicated by restaurant priciness
+		double Syy = calculateS(); //y indicated by user's rating
+*/
+
 		return null;
 	}
-	
+/*
+	private double calculateSyy(YelpUser initial) {
+		double priceMean = calcPricinessMean();
+		double sumSquare = 0;
+
+		for (YelpRestaurant restaurant: restaurants) {
+			int xPrice = restaurant.getPrice();
+			double difference = xPrice - priceMean;
+			sumSquare += Math.pow(difference, 2.0);
+		}
+
+		return sumSquare;
+	}
+
+	private double calcUserRatingMean) {
+		double sum = 0;
+
+		for (YelpRestaurant restaurant: restaurants) {
+			sum += restaurant.getPrice();
+		}
+
+		return sum/(restaurants.size());
+	}
+
+	private double calculateSxx(YelpUser initial) {
+		double priceMean = calcPricinessMean();
+		double sumSquare = 0;
+
+		for (YelpRestaurant restaurant: restaurants) {
+			int xPrice = restaurant.getPrice();
+			double difference = xPrice - priceMean;
+			sumSquare += Math.pow(difference, 2.0);
+		}
+
+		return sumSquare;
+	}
+
+	private double calcPricinessMean() {
+		double sum = 0;
+
+		for (YelpRestaurant restaurant: restaurants) {
+			sum += restaurant.getPrice();
+		}
+
+		return sum/(restaurants.size());
+	}
+*/
 	@Override
 	public String kMeansClusters_json(int k) {
 		List<Set<YelpRestaurant>> clusterList = new ArrayList<>();

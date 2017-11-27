@@ -93,7 +93,6 @@ public class YelpDatabase implements MP5Db<Review> {
 		
 		for (int index = 0; index < clusterList.size(); index++) {
 			Set<YelpRestaurant> cluster = clusterList.get(index);
-			JsonArray allClusters = Json.c
 			
 			for (YelpRestaurant restaurant: cluster) {
 				JsonObject clusterJson = Json.createObjectBuilder()
@@ -115,7 +114,7 @@ public class YelpDatabase implements MP5Db<Review> {
 	private List<Set<YelpRestaurant>> clusterUpdate(List<Set<YelpRestaurant>> clusterList, ArrayList<Coordinate> seeds) {
 		List<Set<YelpRestaurant>> newClusterList = new ArrayList<>();
 		
-		for (int index = 0; index < k; index++) {
+		for (int index = 0; index < clusterList.size(); index++) {
 			Set<YelpRestaurant> cluster = new HashSet<>();
 			newClusterList.add(cluster);
 		}

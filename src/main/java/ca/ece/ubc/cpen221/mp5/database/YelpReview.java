@@ -97,6 +97,4 @@ public class YelpReview implements Review{
     
     
     
-    
-    
 }

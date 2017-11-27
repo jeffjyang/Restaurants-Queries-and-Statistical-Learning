@@ -8,15 +8,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.lang.reflect.Array;
+import java.util.*;
 import java.util.function.ToDoubleBiFunction;
+import java.util.stream.Stream;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -53,28 +48,66 @@ public class YelpDatabase implements MP5Db<YelpUser> {
 
 	@Override
 	public ToDoubleBiFunction<MP5Db<YelpUser>, String> getPredictorFunction(String user) {
-		YelpUser userObj = new YelpUser(null); //Null user throw exception?
-/*
-		//TODO: consider if user does not exist
-		for (YelpUser userItr: users) { //Gets the user from the userID
-			if (userItr.getUserId().equals(user))
-				userObj = userItr;
-		}
+		YelpUser userObj = getUser(user);
+		List<String> userReviewString = userObj.getReviews();
+		List<YelpReview> userReviews = convertToReviews(userReviewString);
+		List<YelpRestaurant> userRestaurants = getUserRestaurants(userReviews);
+        List<Double> xMinMean = calcXMinMean()
+        List<Double> yMinMean = new ArrayList<>();
 
-		List<String> userReviews = userObj.getReviews();
-
-		//Converts the user review string list to list of review objects
-		for(YelpReview review: reviews) {
-		    if (userReviews.contains(review.get))
-        }
 
 
 		double Sxx = calculateSxx(); //x indicated by restaurant priciness
 		double Syy = calculateS(); //y indicated by user's rating
-*/
+
 
 		return null;
 	}
+
+    //Converts the user review string list to list of review objects
+	private List<YelpReview> convertToReviews(List<String> reviewStrings) {
+        List<YelpReview> convertedReviews = new ArrayList<>();
+
+        for (String reviewString : reviewStrings) {
+	        convertedReviews.add(getReview(reviewString));
+        }
+
+        return convertedReviews;
+    }
+
+    private List<Double> calcXMinMean(List<YelpRestaurant> userRestaurants) {
+	    double pricinessMean = calcPricinessMean(userRestaurants);
+        List<Double> xMinMean = new ArrayList<>();
+
+
+	    for (YelpRestaurant restaurant: userRestaurants) {
+	        double restaurantXMinMean = restaurant.getPrice() - pricinessMean;
+	        xMinMean.add(restaurantXMinMean);
+        }
+
+	    return xMinMean;
+    }
+
+    private List<YelpRestaurant> getUserRestaurants(List<YelpReview> userReviews) {
+	    List<YelpRestaurant> userRestaurants = new ArrayList<>();
+
+	    for (YelpReview review: userReviews) {
+	        String restaurantString = review.getBusinessId();
+	        userRestaurants.add(getRestaurant(restaurantString));
+        }
+
+        return userRestaurants;
+    }
+
+    private double calculateSxx(List<Double> xMinMean) {
+       //Using streams to convert
+        double Sxx = xMinMean.stream()
+                .map(s -> Math.pow(s, 2.0))
+                .reduce(0.0, Double::sum);
+
+        return Sxx;
+    }
+
 /*
 	private double calculateSyy(YelpUser initial) {
 		double priceMean = calcPricinessMean();
@@ -89,7 +122,7 @@ public class YelpDatabase implements MP5Db<YelpUser> {
 		return sumSquare;
 	}
 
-	private double calcUserRatingMean) {
+	private double calcUserRatingMean() {
 		double sum = 0;
 
 		for (YelpRestaurant restaurant: restaurants) {
@@ -99,29 +132,44 @@ public class YelpDatabase implements MP5Db<YelpUser> {
 		return sum/(restaurants.size());
 	}
 
-	private double calculateSxx(YelpUser initial) {
-		double priceMean = calcPricinessMean();
-		double sumSquare = 0;
 
-		for (YelpRestaurant restaurant: restaurants) {
-			int xPrice = restaurant.getPrice();
-			double difference = xPrice - priceMean;
-			sumSquare += Math.pow(difference, 2.0);
-		}
-
-		return sumSquare;
-	}
-
-	private double calcPricinessMean() {
-		double sum = 0;
-
-		for (YelpRestaurant restaurant: restaurants) {
-			sum += restaurant.getPrice();
-		}
-
-		return sum/(restaurants.size());
 	}
 */
+	private double calcPricinessMean(List<YelpRestaurant> userRestaurants) {
+		double sum = 0;
+
+		for (YelpRestaurant restaurant: userRestaurants) {
+			sum += restaurant.getPrice();
+		}
+
+		return sum/(userRestaurants.size());
+	}
+
+	private YelpUser getUser(String userID) {
+        for (YelpUser user: users) {
+            if (userID.equals(user.getUserId())) {
+                return user;
+            }
+        }
+    }
+
+	//Returns the review object from the review ID
+	private YelpReview getReview(String reviewID) {
+        for (YelpReview review: reviews) {
+            if (reviewID.equals(review.getReviewId())) {
+                return review;
+            }
+        }
+    }
+
+    private YelpRestaurant getRestaurant(String businessID) {
+        for (YelpRestaurant restaurant: restaurants) {
+            if (businessID.equals(restaurant.getBusinessId())) {
+                return restaurant;
+            }
+        }
+    }
+
 	@Override
 	public String kMeansClusters_json(int k) {
 		List<Set<YelpRestaurant>> clusterList = new ArrayList<>();

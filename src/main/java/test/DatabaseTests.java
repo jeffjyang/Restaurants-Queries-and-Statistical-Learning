@@ -17,13 +17,13 @@ public class DatabaseTests {
 	@Test
     public void test00() {
 		YelpDatabase database = new YelpDatabase(restaurantJSON, reviewJSON, userJSON);
+		Set<YelpRestaurant> restaurants = database.getRestaurants();
 		
-	//	System.out.println(database.getRestaurants());
+		for (YelpRestaurant rest : restaurants) {
+			System.out.println(rest.getFullAddress());
+		}
 		
 		}
-	
-	
-		
 }
 
 

@@ -8,8 +8,12 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.function.ToDoubleBiFunction;
 
@@ -48,8 +52,29 @@ public class YelpDatabase implements MP5Db<Review>{
 
 	@Override
 	public String kMeansClusters_json(int k) {
-		// TODO Auto-generated method stub
+		List<Set<YelpRestaurant>> clusterList = new ArrayList<>();
+		
+		
+		
+		
 		return null;
+	}
+	
+	private HashMap<Integer, Coordinate> initializeSeeds (int k) {
+		Random randomGenerator = new Random();
+		List<YelpRestaurant> restaurantList = new ArrayList<>(restaurants);
+		HashMap<Integer, Coordinate> seeds = new HashMap<>();
+		Set<Coordinate> generatedCoords = new HashSet<>();
+
+		for (int index = 0; index < k; index++) {
+			//TODO: Account for possibility of more clusters than restaurants
+			int seedIndex = randomGenerator.nextInt(restaurants.size());
+			Coordinate coord = new Coordinate(restaurantList.get(seedIndex));
+			assert(!generatedCoords.contains(coord)); //Check for same coordinate not used for two seeds
+			seeds.put(index, coord);
+		}
+		
+		return seeds;
 	}
 
 	@Override

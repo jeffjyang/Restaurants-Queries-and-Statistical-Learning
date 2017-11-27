@@ -7,7 +7,7 @@ import javax.json.JsonObject;
 
 public class YelpReview implements Review{
 
-    private String review;
+    private String type;
     private String businessId;
     private Map<String, Integer> votes;
     private String reviewId;		
@@ -19,7 +19,7 @@ public class YelpReview implements Review{
 
     
     public YelpReview(JsonObject obj) { //NEED TO IMPLEMENET ARRAYS 
-	this.review = obj.getString("type");
+	this.type = obj.getString("type");
 	this.businessId = obj.getString("business_id");
 	this.reviewId = obj.getString("review_id");
 	this.text = obj.getString("text");
@@ -68,8 +68,8 @@ public class YelpReview implements Review{
     // getters 
     
     
-    public String getReview() {
-        return review;
+    public String getType() {
+        return type;
     }
 
     public String getBusinessId() {

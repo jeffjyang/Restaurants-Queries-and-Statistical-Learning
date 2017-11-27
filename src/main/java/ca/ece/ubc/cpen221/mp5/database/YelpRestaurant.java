@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.json.JsonObject;
-import javax.json.JsonValue;
 
 public class YelpRestaurant implements Business{
 

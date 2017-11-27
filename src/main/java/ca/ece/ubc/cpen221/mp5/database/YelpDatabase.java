@@ -1,8 +1,12 @@
 package ca.ece.ubc.cpen221.mp5.database;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashSet;
@@ -27,9 +31,12 @@ public class YelpDatabase implements MP5Db<Review>{
 		this.reviews = Collections.synchronizedSet(new HashSet<>());
 		
 		parseJsonRestaurant(restaurantFileName);
-		parseJsonUsers(userFileName);
 		parseJsonReviews(reviewFileName);
-		
+		parseJsonUsers(userFileName);
+	}
+	
+	public Set<YelpRestaurant> getRestaurants() {
+		return restaurants;
 	}
 	
 
@@ -54,17 +61,27 @@ public class YelpDatabase implements MP5Db<Review>{
 	private void parseJsonRestaurant(String jsonDir) {
 		InputStream is;
 		
-		try {
-			is = new FileInputStream(new File(getClass().getResource(jsonDir).getFile()));
-			JsonReader reader = Json.createReader(is);
-			JsonArray array = reader.readArray();
+		try  {
+			FileReader fr = new FileReader(jsonDir);
+			BufferedReader br = new BufferedReader(fr);
+			String line = br.readLine();
 			
-			for (int index = 0; index < array.size(); index++) {
-				JsonObject obj = array.getJsonObject(index);
-				YelpRestaurant restaurant = new YelpRestaurant(obj);	
-				this.restaurants.add(restaurant);
+			while (line != null) {
+				is = new ByteArrayInputStream(line.getBytes());
+				JsonReader reader = Json.createReader(is);
+				JsonObject obj = reader.readObject();
+				
+				YelpRestaurant restaurant = new YelpRestaurant(obj);
+				
+				this.restaurants.add(restaurant);				
+				line = br.readLine();
 			}
+			
+			br.close();
+			
 		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -72,17 +89,27 @@ public class YelpDatabase implements MP5Db<Review>{
 	private void parseJsonUsers(String jsonDir) {
 		InputStream is;
 		
-		try {
-			is = new FileInputStream(new File(getClass().getResource(jsonDir).getFile()));
-			JsonReader reader = Json.createReader(is);
-			JsonArray array = reader.readArray();
+		try  {
+			FileReader fr = new FileReader(jsonDir);
+			BufferedReader br = new BufferedReader(fr);
+			String line = br.readLine();
 			
-			for (int index = 0; index < array.size(); index++) {
-				JsonObject obj = array.getJsonObject(index);
+			while (line != null) {
+				is = new ByteArrayInputStream(line.getBytes());
+				JsonReader reader = Json.createReader(is);
+				JsonObject obj = reader.readObject();
+				
 				YelpUser user = new YelpUser(obj);
-				this.users.add(user);
+				
+				this.users.add(user);				
+				line = br.readLine();
 			}
+			
+			br.close();
+			
 		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -90,17 +117,27 @@ public class YelpDatabase implements MP5Db<Review>{
 	private void parseJsonReviews(String jsonDir) {
 		InputStream is;
 		
-		try {
-			is = new FileInputStream(new File(getClass().getResource(jsonDir).getFile()));
-			JsonReader reader = Json.createReader(is);
-			JsonArray array = reader.readArray();
+		try  {
+			FileReader fr = new FileReader(jsonDir);
+			BufferedReader br = new BufferedReader(fr);
+			String line = br.readLine();
 			
-			for (int index = 0; index < array.size(); index++) {
-				JsonObject obj = array.getJsonObject(index);
+			while (line != null) {
+				is = new ByteArrayInputStream(line.getBytes());
+				JsonReader reader = Json.createReader(is);
+				JsonObject obj = reader.readObject();
+				
 				YelpReview review = new YelpReview(obj);
-				this.reviews.add(review);
+				
+				this.reviews.add(review);				
+				line = br.readLine();
 			}
+			
+			br.close();
+			
 		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}

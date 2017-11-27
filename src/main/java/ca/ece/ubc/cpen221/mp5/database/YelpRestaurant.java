@@ -33,17 +33,17 @@ public class YelpRestaurant implements Business{
     public YelpRestaurant(JsonObject obj) {
 	this.open = (Boolean) obj.getBoolean("open");
 	this.url = obj.getString("url");
-	this.longitude = Double.parseDouble(obj.getString("longitude"));
-	this.businessId = obj.getString("businessId");
+	this.longitude = Double.parseDouble(obj.get("longitude").toString());
+	this.businessId = obj.getString("business_id");
 	this.name = obj.getString("name");
 	this.state = obj.getString("state");
 	this.type = obj.getString("type");
 	this.stars = obj.getInt("stars");
 	this.city = obj.getString("city");
-	this.fullAddress = obj.getString("fullAddress");
-	this.reviewCount = obj.getInt("reviewCount");
-	this.photoUrl = obj.getString("photoUrl");
-	this.latitude = Double.parseDouble(obj.getString("latitude"));
+	this.fullAddress = obj.getString("full_address");
+	this.reviewCount = obj.getInt("review_count");
+	this.photoUrl = obj.getString("photo_url");
+	this.latitude = Double.parseDouble(obj.get("latitude").toString());
 	this.price = obj.getInt("price");
 
 
@@ -86,18 +86,6 @@ public class YelpRestaurant implements Business{
   	}
   	return false;
       }
-      
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     
     @Override

@@ -16,16 +16,16 @@ public class YelpReview implements Review{
     private String userId;		
     private String date;
     
- 
+
     
-    public YelpReview(JsonObject obj) { //NEED TO IMPLEMENET ARRAYS
-	this.review = obj.getString("review");
-	this.businessId = obj.getString("businessId");
-	this.reviewId = obj.getString("reviewId");
+    public YelpReview(JsonObject obj) { //NEED TO IMPLEMENET ARRAYS 
+	this.review = obj.getString("type");
+	this.businessId = obj.getString("business_id");
+	this.reviewId = obj.getString("review_id");
 	this.text = obj.getString("text");
 	this.stars = obj.getInt("stars");
 	this.date = obj.getString("date");
-	this.userId = obj.getString("userId");
+	this.userId = obj.getString("user_id");
 
 	
 	this.votes = new HashMap<>();

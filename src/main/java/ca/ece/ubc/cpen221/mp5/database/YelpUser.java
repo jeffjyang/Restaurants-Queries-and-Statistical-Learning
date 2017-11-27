@@ -21,11 +21,11 @@ public class YelpUser implements User {
     
     public YelpUser(JsonObject obj) {
 	this.url = obj.getString("url");
-	this.reviewCount = obj.getInt("reviewCount");
+	this.reviewCount = obj.getInt("review_count");
 	this.type = obj.getString("type");
-	this.userId = obj.getString("userId");
+	this.userId = obj.getString("user_id");
 	this.name = obj.getString("name");
-	this.averageStars = obj.getInt("averageStars");
+	this.averageStars = obj.getInt("average_stars");
 	
 	this.votes = new HashMap<>();
 	for (String category : votes.keySet()) {

@@ -2,12 +2,10 @@ package test;
 
 import java.util.Set;
 
-
-
-import org.junit.Test;
-
 import ca.ece.ubc.cpen221.mp5.database.YelpDatabase;
 import ca.ece.ubc.cpen221.mp5.database.YelpRestaurant;
+import org.junit.Test;
+
 public class DatabaseTests {
 	private String restaurantJSON = "data/restaurants.JSON";
 	private String reviewJSON = "data/reviews.json";

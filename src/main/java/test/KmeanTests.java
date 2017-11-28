@@ -20,11 +20,6 @@ import org.junit.Test;
 import ca.ece.ubc.cpen221.mp5.database.Coordinate;
 import ca.ece.ubc.cpen221.mp5.database.YelpDatabase;
 
-
-
-/**
- * Created by harryyao on 2017-11-27.
- */
 public class KmeanTests {
     private String restaurantJSON = "data/restaurants.JSON";
     private String reviewJSON = "data/reviews.json";
@@ -44,8 +39,6 @@ public class KmeanTests {
         }
         assertTrue(kmeanTester(jsonCluster, 10));
     }
-
-    
     
     // requres jsonString is JSON array
     private boolean kmeanTester(String jsonString, int numClusters) {

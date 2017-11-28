@@ -14,7 +14,7 @@ public class YelpDBClient {
     private PrintWriter out;
     private static final String[] request_Array = new String[] {"GETRESTAURANT", "ADDUSER",
             "ADDRESTAURANT", "ADDREVIEW"};
-    private static final Set<String> requests = new HashSet<>(request_Array);
+    private static final Set<String> requests = new HashSet<>();
 
     public YelpDBClient(String hostname, int port) throws IOException {
         socket = new Socket(hostname, port);

@@ -218,11 +218,20 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 	    clusterList.get(bestSeed).add(restaurant);
 	}
 
-	for (int index = 0; index < clusterList.size(); index++) { //TODO: Replace with exit loop when constant is asserted 
+	List<Set<YelpRestaurant>> oldClusterList = new ArrayList<>();
+
+	//for (int index = 0; index < clusterList.size(); index++) { //TODO: Replace with exit loop when constant is asserted 
+	//    seeds = centroidUpdate(clusterList, seeds); //Updating the seedList with new centroids
+	//    clusterList = clusterUpdate(clusterList, seeds); //Updating the clusterList with the new centroids
+	//}
+
+	while (!oldClusterList.equals(clusterList)) {
+	    oldClusterList = clusterList;
 	    seeds = centroidUpdate(clusterList, seeds); //Updating the seedList with new centroids
 	    clusterList = clusterUpdate(clusterList, seeds); //Updating the clusterList with the new centroids
-	}
 
+	}    
+	    
 	clusterJson = getJsonString(clusterList);
 
 	return clusterJson;

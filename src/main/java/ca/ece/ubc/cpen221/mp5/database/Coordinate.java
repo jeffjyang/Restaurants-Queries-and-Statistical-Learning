@@ -21,4 +21,6 @@ public class Coordinate {
 	public double getLong() {
 		return this.longitude;
 	}
+	
+	
 }

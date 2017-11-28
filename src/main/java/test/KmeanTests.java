@@ -17,7 +17,7 @@ public class KmeanTests {
     @Test
     public void Test00 () {
         YelpDatabase database = new YelpDatabase(restaurantJSON, reviewJSON, userJSON);
-        String jsonCluster = database.kMeansClusters_json(5);
+        String jsonCluster = database.kMeansClusters_json(10);
 
         System.out.println(jsonCluster);
 
@@ -26,7 +26,6 @@ public class KmeanTests {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-
     }
 
 

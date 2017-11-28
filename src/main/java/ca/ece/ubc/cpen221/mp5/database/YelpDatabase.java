@@ -243,8 +243,8 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 
 	    for (YelpRestaurant restaurant: cluster) {
 		JsonObject clusterJson = Json.createObjectBuilder()
-			.add("x", restaurant.getLongitude()) //TODO: Confirm x is longitude
-			.add("y", restaurant.getLatitude())
+			.add("x", restaurant.getLatitude()) //TODO: Confirm x is longitude
+			.add("y", restaurant.getLongitude())
 			.add("name", restaurant.getName())
 			.add("cluster", index)
 			.add("weight", 1.0) //TODO: What is cluster weight?
@@ -259,6 +259,16 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 
     JsonArray jsonArray = builder.build();
 	return jsonArray.toString();
+
+	//TODO: Remove this during refactor
+   /* String clusterString = "[";
+
+    for (JsonObject jsonObj: set) {
+        clusterString = clusterString + jsonObj.toString() + ", ";
+    }
+    clusterString = clusterString.substring(0, clusterString.length() - 2) + "]";
+
+    return clusterString;*/
     }
 
     private List<Set<YelpRestaurant>> clusterUpdate(List<Set<YelpRestaurant>> clusterList, ArrayList<Coordinate> seeds) {

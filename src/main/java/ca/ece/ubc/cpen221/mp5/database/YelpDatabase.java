@@ -14,11 +14,7 @@ import java.util.function.ToDoubleBiFunction;
 import java.util.stream.DoubleStream;
 import java.util.stream.Stream;
 
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
-import javax.json.JsonWriter;
+import javax.json.*;
 
 import ca.ece.ubc.cpen221.mp5.MP5Db;
 
@@ -35,6 +31,7 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 	parseJsonRestaurant(restaurantFileName);
 	parseJsonReviews(reviewFileName);
 	parseJsonUsers(userFileName);
+
     }
 
     public Set<YelpRestaurant> getRestaurants() {
@@ -227,7 +224,7 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 
 	while (!oldClusterList.equals(clusterList)) {
 	    oldClusterList = clusterList;
-	    seeds = centroidUpdate(clusterList, seeds); //Updating the seedList with new centroids
+	    seeds = centroidUpdate(clusterList); //Updating the seedList with new centroids
 	    clusterList = clusterUpdate(clusterList, seeds); //Updating the clusterList with the new centroids
 
 	}    
@@ -239,7 +236,7 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 
     private String getJsonString(List<Set<YelpRestaurant>> clusterList) {
 	Set<JsonObject> set = new HashSet<>(); 
-	JsonArray jsonArray = Json.createArrayBuilder().build();
+	JsonArrayBuilder builder = Json.createArrayBuilder();
 
 	for (int index = 0; index < clusterList.size(); index++) {
 	    Set<YelpRestaurant> cluster = clusterList.get(index);
@@ -256,8 +253,11 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 	    }
 	}
 
-	jsonArray.addAll(set);
+	for (JsonObject jsonObj: set) {
+	    builder.add(jsonObj);
+    }
 
+    JsonArray jsonArray = builder.build();
 	return jsonArray.toString();
     }
 
@@ -278,13 +278,13 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
     }
 
     //Calculates the mean of all data points assigned to each cluster and updates accordingly
-    private ArrayList<Coordinate> centroidUpdate(List<Set<YelpRestaurant>> clusterList, ArrayList<Coordinate> seeds) {
-	ArrayList<Coordinate> newSeeds = new ArrayList<>(seeds); //Copy safety
+    private ArrayList<Coordinate> centroidUpdate(List<Set<YelpRestaurant>> clusterList) {
+	ArrayList<Coordinate> newSeeds = new ArrayList<>(); //Copy safety
 
 	for (int index = 0; index < clusterList.size(); index++) {
 	    Set<YelpRestaurant> cluster = clusterList.get(index);
 	    Coordinate newCentroid = calculateCentroid(cluster);
-	    newSeeds.add(index, newCentroid);
+	    newSeeds.add(newCentroid);
 	}
 
 	return newSeeds;

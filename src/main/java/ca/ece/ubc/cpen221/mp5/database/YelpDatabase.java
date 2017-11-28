@@ -244,7 +244,7 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 	    for (YelpRestaurant restaurant: cluster) {
 		JsonObject clusterJson = Json.createObjectBuilder()
 			.add("x", restaurant.getLongitude()) //TODO: Confirm x is longitude
-			.add("y", restaurant.getLongitude())
+			.add("y", restaurant.getLatitude())
 			.add("name", restaurant.getName())
 			.add("cluster", index)
 			.add("weight", 1.0) //TODO: What is cluster weight?

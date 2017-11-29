@@ -2,17 +2,13 @@ package ca.ece.ubc.cpen221.mp5.database;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
+
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.function.ToDoubleBiFunction;
-import java.util.stream.DoubleStream;
-import java.util.stream.Stream;
 
 import javax.json.*;
 
@@ -54,8 +50,8 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 
 	double meanPrice = getMeanPrice(userRestaurants);
 	double meanStar = getMeanStar(userReviews);
-	
-	
+
+
 	List<Double> distFromMeanPrices = distFromMeanPrice(userRestaurants, meanPrice);
 	List<Double> distFromMeanStars = distFromMeanStar(userReviews, meanStar);
 
@@ -198,37 +194,48 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 
     @Override
     public String kMeansClusters_json(int k) {
-	List<Set<YelpRestaurant>> clusterList = new ArrayList<>();
-	ArrayList<Coordinate> seeds = initializeSeeds(k);
+	boolean flag = false;
+	List<Set<YelpRestaurant>> clusterList;// = new ArrayList<>();
 	String clusterJson;
-	boolean constant = false;
+	//ArrayList<Coordinate> seeds = new ArrayList<>();
 
-	// Initializing all the cluster sets
-	for (int index = 0; index < k; index++) {
-	    Set<YelpRestaurant> cluster = new HashSet<>();
-	    clusterList.add(cluster);
-	}
+	do {
+	    flag = false;
+	    // List<Set<YelpRestaurant>> clusterList = new ArrayList<>();
+	    clusterList = new ArrayList<>();
+	    ArrayList<Coordinate> seeds = new ArrayList<>();
+	    seeds = initializeSeeds(k);
+	    // String clusterJson;
 
-	// Adding the restaurant to the cluster listing
-	for (YelpRestaurant restaurant : restaurants) {
-	    int bestSeed = bestCluster(restaurant, seeds);
-	    clusterList.get(bestSeed).add(restaurant);
-	}
+	    // Initializing all the cluster sets
+	    for (int index = 0; index < k; index++) {
+		Set<YelpRestaurant> cluster = new HashSet<>();
+		clusterList.add(cluster);
+	    }
 
-	List<Set<YelpRestaurant>> oldClusterList = new ArrayList<>();
+	    // Adding the restaurant to the cluster listing
+	    for (YelpRestaurant restaurant : restaurants) {
+		int bestSeed = bestCluster(restaurant, seeds);
+		clusterList.get(bestSeed).add(restaurant);
+	    }
 
-	//for (int index = 0; index < clusterList.size(); index++) { //TODO: Replace with exit loop when constant is asserted 
-	//    seeds = centroidUpdate(clusterList, seeds); //Updating the seedList with new centroids
-	//    clusterList = clusterUpdate(clusterList, seeds); //Updating the clusterList with the new centroids
-	//}
+	    List<Set<YelpRestaurant>> oldClusterList = new ArrayList<>();
 
-	while (!oldClusterList.equals(clusterList)) {
-	    oldClusterList = clusterList;
-	    seeds = centroidUpdate(clusterList); //Updating the seedList with new centroids
-	    clusterList = clusterUpdate(clusterList, seeds); //Updating the clusterList with the new centroids
 
-	}    
-	    
+
+	    while (!oldClusterList.equals(clusterList)) {
+		oldClusterList = clusterList;
+		//System.out.println("efwfewf" + clusterList.size());
+		seeds = centroidUpdate(clusterList); //Updating the seedList with new centroids
+		clusterList = clusterUpdate(clusterList, seeds); //Updating the clusterList with the new centroids
+		if (clusterList == null) {
+		    flag = true;
+		    break;
+		}
+	    }    
+	    System.out.println("how many times");
+	} while (flag == true);
+
 	clusterJson = getJsonString(clusterList);
 
 	return clusterJson;
@@ -255,20 +262,12 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 
 	for (JsonObject jsonObj: set) {
 	    builder.add(jsonObj);
-    }
+	}
 
-    JsonArray jsonArray = builder.build();
+	JsonArray jsonArray = builder.build();
 	return jsonArray.toString();
 
-	//TODO: Remove this during refactor
-   /* String clusterString = "[";
 
-    for (JsonObject jsonObj: set) {
-        clusterString = clusterString + jsonObj.toString() + ", ";
-    }
-    clusterString = clusterString.substring(0, clusterString.length() - 2) + "]";
-
-    return clusterString;*/
     }
 
     private List<Set<YelpRestaurant>> clusterUpdate(List<Set<YelpRestaurant>> clusterList, ArrayList<Coordinate> seeds) {
@@ -283,7 +282,12 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 	    int bestCentroid = bestCluster(restaurant, seeds);
 	    newClusterList.get(bestCentroid).add(restaurant);
 	}
-
+	//System.out.println("efjklw" + newClusterList.size());
+	for (Set<YelpRestaurant> set : newClusterList) {
+	    if (set.isEmpty()) {
+		return null;
+	    }
+	}
 	return newClusterList;
     }
 
@@ -347,22 +351,23 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
     }
 
     private ArrayList<Coordinate> initializeSeeds(int k) {
+
 	Random randomGenerator = new Random();
 	List<YelpRestaurant> restaurantList = new ArrayList<>(restaurants);
 	ArrayList<Coordinate> seeds = new ArrayList<>();
 	Set<Coordinate> generatedCoords = new HashSet<>();
 
 	for (int index = 0; index < k; index++) {
-	    // TODO: Account for possibility of more clusters than restaurants
-	    int seedIndex = randomGenerator.nextInt(restaurants.size());
+	    
+	    int seedIndex = randomGenerator.nextInt(restaurantList.size());
 	    Coordinate coord = new Coordinate(restaurantList.get(seedIndex));
+	    restaurantList.remove(seedIndex);
 
-	    assert (!generatedCoords.contains(coord)); // Check for same coordinate not used for two seeds
 	    generatedCoords.add(coord);	// add this coordinate to the already generated coord set
 	    seeds.add(coord);
 	}
-
 	return seeds;
+
     }
 
 

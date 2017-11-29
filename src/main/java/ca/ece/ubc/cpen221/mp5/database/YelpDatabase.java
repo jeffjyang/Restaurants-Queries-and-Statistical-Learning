@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.function.ToDoubleBiFunction;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.json.*;
 
@@ -69,7 +71,26 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 	ToDoubleBiFunction<MP5Db<YelpRestaurant>, String> fn = (x,y) -> b + a * x.getMatches(y).iterator().next().getPrice(); 
 	return fn;
     }
+    
+    private synchronized Set<YelpRestaurant> filterRestaurantsRatingGT(int rating) {
+    	List<YelpRestaurant> filtered = new ArrayList<>(restaurants);
+    	
+    	Set<YelpRestaurant> setStream = filtered.stream()
+    			.filter(restaurant -> restaurant.getStars() > rating)
+    			.collect(Collectors.toSet());
 
+    	return setStream;
+    }
+    
+    private synchronized Set<YelpRestaurant> filterRestaurantNeighbourhood(String neighbourhood) {
+    	List<YelpRestaurant> filtered = new ArrayList<>(restaurants);
+    	
+    	Set<YelpRestaurant> setStream = filtered.stream()
+    			.filter(restaurant -> restaurant.getNeighborhoods().contains(neighbourhood))
+    			.collect(Collectors.toSet());
+
+    	return setStream;
+    }
 
 
     private double getMeanStar(List<YelpReview> userReviews) {

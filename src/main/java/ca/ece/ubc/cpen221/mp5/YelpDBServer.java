@@ -8,69 +8,147 @@ import java.net.Socket;
 
 //Code taken from Fibonnacci server code example
 public class YelpDBServer {
-    public int DB_PORT;
+    public int DB_PORT;			// static? 
     private String restaurantJSON = "data/restaurants.JSON";
     private String reviewJSON = "data/reviews.json";
     private String userJSON = "data/users.json";
+
     private ServerSocket serverSocket;
     YelpDatabase database;
 
     public YelpDBServer(int port) throws IOException {
-        final int DB_PORT = port;
-        this.DB_PORT = DB_PORT;
-        serverSocket = new ServerSocket(DB_PORT);
+	final int DB_PORT = port;
+	this.DB_PORT = DB_PORT;
+	serverSocket = new ServerSocket(DB_PORT);
 
-        this.database = new YelpDatabase(restaurantJSON, reviewJSON, userJSON);
+	this.database = new YelpDatabase(restaurantJSON, reviewJSON, userJSON);
 
+
+    }
+
+    /**
+     * Run the server, listening for connections and handling them.
+     * 
+     * @throws IOException
+     *             if the main server socket is broken
+     */
+
+
+    public void serve() throws IOException {
+	while (true) {
+	    // block until a client connects
+	    final Socket socket = serverSocket.accept();			// TODO 
+	    // create a new thread to handle that client
+	    Thread handler = new Thread(new Runnable() {
+		public void run() {
+		    try {
+			try {
+			    handle(socket);
+			} finally {
+			    socket.close();
+			}
+		    } catch (IOException ioe) {
+			// this exception wouldn't terminate serve(),
+			// since we're now on a different thread, but
+			// we still need to handle it
+			ioe.printStackTrace();
+		    }
+		}
+	    });
+	    // start the thread
+	    handler.start();
+	}
+    }
+
+    //    public void serve() throws IOException {
+    //	while (true) {
+    //	    Socket socket = serverSocket.accept();
+    //	    try {
+    //		handle(socket);
+    //	    } finally {
+    //		socket.close();
+    //	    }
+    //	}
+    //    }
+
+
+    /**
+     * Handle one client connection. Returns when client disconnects.
+     * 
+     * @param socket
+     *            socket where client is connected
+     * @throws IOException
+     *             if connection encounters an error
+     */
+    private void handle(Socket socket) throws IOException {
+	System.err.println("client connected");
+
+	BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+	PrintWriter out = new PrintWriter(new OutputStreamWriter(
+		socket.getOutputStream()));
+
+	try {
+	    for (String line = in.readLine(); line != null; line = in.readLine()) {
+		System.err.println("request: " + line);
+		try {
+		    //TODO: finish adding queries
+		    // get restaurant query	// TODO ghetto af 
+		    if (line.contains("GETRESTAURANT")) {
+			String[] split = line.split("GETRESTAURANT");
+			for (String token : split) {
+			    if (!"".equals(token)) {
+				out.print(database.getRestaurantJson(token));
+			    }
+			}
+		    }
+		    
+		    // TODO ADDUSER
+		    
+		    // TODO ADDRESTAURANT 
+		    
+		    
+		    
+		    
+		    
+
+
+
+
+		    System.err.println("reply: ");
+
+		} catch (Exception e) { //Query exception here
+		    e.printStackTrace();
+		}
+		out.flush();
+	    }
+	} finally {
+	    out.close();
+	    in.close();
+	}
 
     }
 
     //For initializing server
     public static void main(String[] args) {
-        YelpDBServer server;
+	YelpDBServer server;
 
-        int port = Integer.parseInt(args[0]);
-        try {
-           server = new YelpDBServer(port);
-           server.serve();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+	// initialize the port from command line
+	int port = 3000;
+	if (args.length > 0) {
+	    port = Integer.parseInt(args[0]);
+	}  
+	try {
+	    server = new YelpDBServer(port);
+	    server.serve();
+	} catch (IOException e) {
+	    e.printStackTrace();
+	}
     }
-    public void serve() throws IOException {
-        while (true) {
-            Socket socket = serverSocket.accept();
-            try {
-                handle(socket);
-            } finally {
-                socket.close();
-            }
-        }
-    }
-    private void handle(Socket socket) throws IOException {
-        System.err.println("client connected");
 
-        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        PrintWriter out = new PrintWriter(new OutputStreamWriter(
-                socket.getOutputStream()));
 
-        try {
-            for (String line = in.readLine(); line != null; line = in.readLine()) {
-                System.err.println("request: " + line);
-                try {
-                    //TODO: Add queries here
 
-                    System.err.println("reply: ");
 
-                } catch (Exception e) { //Query exception here
-                    e.printStackTrace();
-                }
-                out.flush();
-            }
-        } finally {
-            out.close();
-            in.close();
-        }
 
-    }
+
+
 }

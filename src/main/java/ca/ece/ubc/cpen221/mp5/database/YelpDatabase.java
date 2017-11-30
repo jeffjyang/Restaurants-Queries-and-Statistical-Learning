@@ -212,6 +212,64 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 	}
 	return null; 		// TODO see above
     }
+    
+    // TODO return null value or err code of restaurant doesnt exist?????
+    public String getRestaurantJson(String businessID) {
+ 	YelpRestaurant restaurant = getRestaurant(businessID);
+ 	return restaurant.getJsonString();
+     }
+     
+     
+    
+    // return true if user added successfully, false otherwise 
+    public boolean adduser(String userJson) {
+	
+	InputStream is = new ByteArrayInputStream(userJson.getBytes());
+	JsonReader reader = Json.createReader(is);
+	JsonObject userInput = reader.readObject();
+	
+	if (userInput.isNull("name")) {
+	    return false;
+	}
+	
+	String name = userInput.getString("name");
+	String url = "google.com/eyylmao this is totally a url";
+	String userId = "TotallyARandomStringLel";
+	
+	JsonObject reviewCount = Json.createObjectBuilder()
+		.add("funny", 0)
+		.add("userful", 0)
+		.add("cool", 0)
+		.build();
+	
+	JsonObject newUserJson = Json.createObjectBuilder()
+		.add("url", url)
+		.add("votes", reviewCount.toString())		// json to string
+		.add("review_count", 0)
+		.add("type", "user")
+		.add("user_id", userId)
+		.add("name", name)
+		.add("average_stars", 0)
+		.build();
+
+	YelpUser newUser = new YelpUser(newUserJson);
+	
+	users.add(newUser);
+	
+	return true;
+		
+    }
+    
+    
+    
+    
+// TODO add restaurant     
+    
+    
+    
+    
+    
+     
 
     @Override
     public String kMeansClusters_json(int k) {

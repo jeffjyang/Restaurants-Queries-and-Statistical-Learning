@@ -3,18 +3,21 @@ package ca.ece.ubc.cpen221.mp5.database;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.json.Json;
 import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 
 public class YelpRestaurant implements Business{
 
+
     private boolean open;
     private String url;
     private double longitude;
-    private List<String> neighborhoods;
+    private List<String> neighborhoods = new ArrayList<>();
     private String businessId;
     private String name;
-    private List<String> categories;
+    private List<String> categories = new ArrayList<>();
     private String state;
     private String type;
     private int stars;					// TODO update stars 
@@ -22,12 +25,12 @@ public class YelpRestaurant implements Business{
     private String fullAddress;
     private int reviewCount;
     private String photoUrl;
-    private List<String> schools;
+    private List<String> schools = new ArrayList<>();
     private double latitude;
     private int price;
 
     private List<String> reviews;		// TODO change YelpReview to review ids? 
-    
+
 
     // TODO lmao no way this is right 
     public YelpRestaurant(JsonObject obj) {
@@ -48,51 +51,96 @@ public class YelpRestaurant implements Business{
 
 	JsonArray neighbourhoodJson = obj.getJsonArray("neighbourhoods");
 	if (neighbourhoodJson != null) {
-		for (int index = 0; index < neighbourhoodJson.size(); index++) {
-			this.neighborhoods.add(neighbourhoodJson.get(index).toString());
-		}
+	    for (int index = 0; index < neighbourhoodJson.size(); index++) {
+		this.neighborhoods.add(neighbourhoodJson.get(index).toString());
+	    }
 	}
-	
+
 	JsonArray schoolsJson = obj.getJsonArray("schools");
 	if (schoolsJson != null) {
-		for (int index = 0; index < schoolsJson.size(); index++) {
-			this.schools.add(schoolsJson.get(index).toString());
-		}
+	    for (int index = 0; index < schoolsJson.size(); index++) {
+		this.schools.add(schoolsJson.get(index).toString());
+	    }
 	}
-	
+
 	JsonArray categoriesJson = obj.getJsonArray("categories");
 	if (categoriesJson != null) {
-		for (int index = 0; index < categoriesJson.size(); index++) {
-			this.categories.add(neighbourhoodJson.get(index).toString());
-		}
+	    for (int index = 0; index < categoriesJson.size(); index++) {
+		this.categories.add(neighbourhoodJson.get(index).toString());
+	    }
 	}
-	
+
 	reviews = new ArrayList<>();
     }
 
-    
+    // returns a JSON string representing the restaurant 
+    public String getJsonString() {
+	JsonArrayBuilder neighborhoodsJsonBuilder = Json.createArrayBuilder();
+	for (String neighborhood : neighborhoods) {
+	    neighborhoodsJsonBuilder.add(neighborhood);
+	}
+	JsonArray neighborhoodsJson = neighborhoodsJsonBuilder.build();
+	
+	
+	JsonArrayBuilder categoriesJsonBuilder = Json.createArrayBuilder();
+	for (String catageory : categories) {
+	    categoriesJsonBuilder.add(catageory);
+	}
+	JsonArray categoriesJson = categoriesJsonBuilder.build();
+	
+	JsonArrayBuilder schoolsJsonBuilder = Json.createArrayBuilder();
+	for (String school : schools) {
+	    schoolsJsonBuilder.add(school);
+	}
+	JsonArray schoolsJson = schoolsJsonBuilder.build();
+	
+	
+	JsonObject restaurantJson = Json.createObjectBuilder()
+		.add("open", this.open) //TODO: Confirm x is longitude
+		.add("url", this.url)
+		.add("longitude", this.longitude)
+		.add("neighborhoods", neighborhoodsJson.toString())
+		.add("business_id", this.businessId) //TODO: What is cluster weight?
+		.add("name", this.name) 
+		.add("categories", categoriesJson.toString()) 
+		.add("state", this.state) 
+		.add("type", this.type) 
+		.add("city", this.city)
+		.add("full_address", this.fullAddress)
+		.add("review_count", this.reviewCount)
+		.add("photo_url", this.photoUrl)
+		.add("schools", schoolsJson.toString())
+		.add("latitude", this.latitude)
+		.add("price", this.price)
+		.build();
+	
+	return restaurantJson.toString();
+    }
+
+
+
     public void addReview(String review) {
-  	reviews.add(review);
-  	reviewCount ++;
-      }
-      
-      public List<String> getReviews() {
-  	List<String> reviewsCopy = new ArrayList<>();
-  	for (String review : reviews) {
-  	    reviewsCopy.add(review);
-  	}
-  	return reviewsCopy;
-      }
-      
-      public boolean removeReview(String review) {
-  	if (reviews.remove(review)) {
-  	    reviewCount--;
-  	    return true;
-  	}
-  	return false;
-      }
-    
-    
+	reviews.add(review);
+	reviewCount ++;
+    }
+
+    public List<String> getReviews() {
+	List<String> reviewsCopy = new ArrayList<>();
+	for (String review : reviews) {
+	    reviewsCopy.add(review);
+	}
+	return reviewsCopy;
+    }
+
+    public boolean removeReview(String review) {
+	if (reviews.remove(review)) {
+	    reviewCount--;
+	    return true;
+	}
+	return false;
+    }
+
+
     @Override
     public String getName() {
 	return name;

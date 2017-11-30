@@ -39,7 +39,8 @@ public class QueryTests {
 	// Taken from
 	// https://stackoverflow.com/questions/23809005/how-to-display-antlr-tree-gui
 	public static void main(String[] args) {
-		String query = "(category(Chinese) || category(Italian)) && price <= 2";
+		String query = "in(Telegraph Ave) && (category(Chinese) || category(Italian)) && price <= 2)";
+		query = replaceWhiteSpace(query);
 		CharStream stream = CharStreams.fromString(query);
 		QueryLexer lexer = new QueryLexer(stream);
 		TokenStream tokens = new CommonTokenStream(lexer);
@@ -60,6 +61,24 @@ public class QueryTests {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(200, 200);
 		frame.setVisible(true);
+	}
+	
+	private static String replaceWhiteSpace(String query) {
+		boolean openBracket = false;
+		char[] queryArray = query.toCharArray();
+		
+		for (int index = 0; index < queryArray.length; index++) {
+			if (queryArray[index] == '(') openBracket = true;
+			else if (queryArray[index] == ')') openBracket = false;
+			else if (openBracket && queryArray[index] == ' ') {
+				queryArray[index] = '_';
+			}
+			System.out.println(String.valueOf(queryArray));
+		}
+		
+		return String.valueOf(queryArray);
+		
+		
 	}
 
 }

@@ -3,6 +3,7 @@ package ca.ece.ubc.cpen221.mp5.database;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.json.JsonArray;
 import javax.json.JsonObject;
 
 public class YelpRestaurant implements Business{
@@ -45,21 +46,26 @@ public class YelpRestaurant implements Business{
 	this.latitude = Double.parseDouble(obj.get("latitude").toString());
 	this.price = obj.getInt("price");
 
-
-	this.neighborhoods = new ArrayList<>();
-	for (String neighborhood : neighborhoods) {
-	    this.neighborhoods.add(neighborhood);
+	JsonArray neighbourhoodJson = obj.getJsonArray("neighbourhoods");
+	if (neighbourhoodJson != null) {
+		for (int index = 0; index < neighbourhoodJson.size(); index++) {
+			this.neighborhoods.add(neighbourhoodJson.get(index).toString());
+		}
 	}
-
-	this.categories = new ArrayList<>();
-	for (String category : categories) {
-	    this.categories.add(category);
-	}	
-
-	this.schools= new ArrayList<>();
-	for (String school : schools) {
-	    this.schools.add(school);
-	}	
+	
+	JsonArray schoolsJson = obj.getJsonArray("schools");
+	if (schoolsJson != null) {
+		for (int index = 0; index < schoolsJson.size(); index++) {
+			this.schools.add(schoolsJson.get(index).toString());
+		}
+	}
+	
+	JsonArray categoriesJson = obj.getJsonArray("categories");
+	if (categoriesJson != null) {
+		for (int index = 0; index < categoriesJson.size(); index++) {
+			this.categories.add(neighbourhoodJson.get(index).toString());
+		}
+	}
 	
 	reviews = new ArrayList<>();
     }

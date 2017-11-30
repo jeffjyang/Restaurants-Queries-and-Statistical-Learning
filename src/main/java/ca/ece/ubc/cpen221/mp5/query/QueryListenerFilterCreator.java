@@ -1,6 +1,15 @@
 package ca.ece.ubc.cpen221.mp5.query;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.Stack;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import ca.ece.ubc.cpen221.mp5.database.YelpRestaurant;
 import ca.ece.ubc.cpen221.mp5.query.QueryParser.AndexprContext;
 import ca.ece.ubc.cpen221.mp5.query.QueryParser.AtomContext;
 import ca.ece.ubc.cpen221.mp5.query.QueryParser.CategoryContext;
@@ -11,8 +20,16 @@ import ca.ece.ubc.cpen221.mp5.query.QueryParser.PriceContext;
 import ca.ece.ubc.cpen221.mp5.query.QueryParser.RatingContext;
 import ca.ece.ubc.cpen221.mp5.query.QueryParser.RootContext;
 
-public class QueryListenerPrintEverything extends QueryBaseListener {
-
+public class QueryListenerFilterCreator extends QueryBaseListener {
+	Stack<Set<YelpRestaurant>> restaurantStack = new Stack<>();
+	Set<YelpRestaurant> restaurants;
+	List<YelpRestaurant> restaurantsList = new ArrayList<>(restaurants);
+	
+	public QueryListenerFilterCreator (Set<YelpRestaurant> restaurants) {
+		this.restaurants = restaurants;
+	}
+	
+	
 	@Override
 	public void enterRoot(RootContext ctx) {
 		System.err.println("entering root");
@@ -55,7 +72,7 @@ public class QueryListenerPrintEverything extends QueryBaseListener {
 
 	@Override
 	public void enterIn(InContext ctx) {
-		System.err.println("entering in");
+		
 	}
 
 	@Override
@@ -81,7 +98,11 @@ public class QueryListenerPrintEverything extends QueryBaseListener {
 	@Override
 	public void exitName(NameContext ctx) {
 		System.err.println("exiting name");
-	}
+		Set<YelpRestaurant> restaurants = restaurantsList.stream()
+				.filter(restaurant -> restaurant.getName().equals(ctx.toString()))
+				.collect(Collectors.toSet());
+		restaurantStack.push(restaurants);
+		}
 
 	@Override
 	public void enterPrice(PriceContext ctx) {
@@ -91,6 +112,11 @@ public class QueryListenerPrintEverything extends QueryBaseListener {
 	@Override
 	public void exitPrice(PriceContext ctx) {
 		System.err.println("exiting price");
+		Set<YelpRestaurant> restaurants = restaurantsList.stream()
+				.filter(restaurant -> ctx.toString().equals(restaurant.getPrice()))
+				.collect(Collectors.toSet());
+		restaurantStack.push(restaurants);
+		}
 	}
 
 	@Override
@@ -102,5 +128,4 @@ public class QueryListenerPrintEverything extends QueryBaseListener {
 	public void exitRating(RatingContext ctx) {
 		System.err.println("exiting rating");
 	}
-	
 }

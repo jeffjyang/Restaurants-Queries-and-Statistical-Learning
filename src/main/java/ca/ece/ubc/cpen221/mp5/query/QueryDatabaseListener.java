@@ -32,7 +32,8 @@ public class QueryDatabaseListener extends QueryBaseListener{
 	@Override
 	public void exitIn(QueryParser.InContext ctx) {
 		Set<YelpRestaurant> result;
-		result = Collections.synchronizedSet(database.filterRestaurantNeighbourhood(ctx.getText()));
+		result = Collections.synchronizedSet(database.filterRestaurantNeighbourhood(ctx.getText()));\
+		System.out
 	}
 	
 	@Override

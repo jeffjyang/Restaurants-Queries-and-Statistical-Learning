@@ -9,17 +9,12 @@ AND : '&&';
 LPAREN : '(';
 RPAREN : ')';
 IN : 'in';
-GT : '>';
-GTE : '>=';
-LT : '<';
-LTE : '<=';
-EQ : '=';
 NUM :  '1'..'5';
 CATEGORY : 'category';
 NAME : 'name';
 RATING : 'rating';
 PRICE : 'price';
-STRING : ('a'..'z' | 'A'..'Z')+;
+STRING   : ('a'..'z' | 'A'..'Z' | '_') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9')*;
 WHITESPACE : [ \t\r\n]+ -> skip;
 INEQ : ('>' | '>=' | '<' | '<=' | '=');
 
@@ -33,3 +28,4 @@ name : NAME LPAREN STRING RPAREN;
 price : PRICE INEQ NUM;
 rating : RATING INEQ NUM;
 
+ 

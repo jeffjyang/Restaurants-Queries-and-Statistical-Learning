@@ -4,10 +4,16 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.Stack;
 
+import ca.ece.ubc.cpen221.mp5.database.YelpDatabase;
 import ca.ece.ubc.cpen221.mp5.database.YelpRestaurant;
 
 public class QueryDatabaseListener extends QueryBaseListener{
 	private Stack<Set<YelpRestaurant>> stack = new Stack<Set<YelpRestaurant>>();
+	private YelpDatabase database;
+	
+	public QueryDatabaseListener(YelpDatabase database) {
+		this.database = database;
+	}
 	
 	@Override
 	public void exitOrexpr(QueryParser.OrexprContext ctx) {
@@ -26,7 +32,7 @@ public class QueryDatabaseListener extends QueryBaseListener{
 	@Override
 	public void exitIn(QueryParser.InContext ctx) {
 		Set<YelpRestaurant> result;
-		result = Collections.synchronizedSet(data)
+		result = Collections.synchronizedSet(database.filterRestaurantNeighbourhood(ctx.getText()));
 	}
 	
 	@Override

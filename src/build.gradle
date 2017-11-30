@@ -17,7 +17,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     // https://mvnrepository.com/artifact/javax.json/javax.json-api
     compile 'org.glassfish:javax.json:1.1.2'
-    compile group: 'org.antlr', name: 'antlr4-runtime', version: '4.7'
+    compile group: 'org.antlr', name: 'antlr4', version: '4.7'
 }
 
 test.testLogging {

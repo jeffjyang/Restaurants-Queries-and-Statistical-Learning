@@ -20,8 +20,16 @@ public class DatabaseTests {
 		for (YelpRestaurant rest : restaurants) {
 			System.out.println(rest.getFullAddress());
 		}
+	}
+	@Test
+    public void testQuery() {
+		String queryString = "in(Telegraph Ave) && (category(Chinese) || category(Italian)) && price <= 2";
+		YelpDatabase database = new YelpDatabase(restaurantJSON, reviewJSON, userJSON);
+		Set<YelpRestaurant> restaurants = database.getMatches(queryString);
 		
+		for (YelpRestaurant rest : restaurants) {
+			System.out.println(rest.getName());
 		}
+	}
 }
-
 

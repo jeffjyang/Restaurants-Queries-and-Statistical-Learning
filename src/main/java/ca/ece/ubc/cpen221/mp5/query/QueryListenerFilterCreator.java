@@ -26,6 +26,7 @@ public class QueryListenerFilterCreator extends QueryBaseListener {
 	Stack<Set<YelpRestaurant>> restaurantStack = new Stack<>();
 	Set<YelpRestaurant> restaurants;
 	List<YelpRestaurant> restaurantsList;
+	Set<YelpRestaurant> filteredRestaurants;
 
 	public QueryListenerFilterCreator(Set<YelpRestaurant> restaurants) {
 		super();
@@ -34,32 +35,27 @@ public class QueryListenerFilterCreator extends QueryBaseListener {
 	}
 
 	@Override
-	public void enterRoot(RootContext ctx) {
-		System.err.println("entering root");
-	}
-
-	@Override
 	public void exitRoot(RootContext ctx) {
-		System.err.println("exiting root");
+//		System.err.println("exiting root");
 
-		System.out.println(restaurantStack.size());
+		//System.out.println(restaurantStack.size());
 
 		Set<YelpRestaurant> combinedSet = restaurantStack.pop();
-		System.out.println("CombinedSet" + combinedSet.size());
+		//System.out.println("CombinedSet" + combinedSet.size());
 		for (YelpRestaurant rest : combinedSet) {
-			System.out.println(rest.getName());
+		//	System.out.println(rest.getName());
 		}
-
+		filteredRestaurants = combinedSet;
 	}
 
 	@Override
 	public void enterOrexpr(OrexprContext ctx) {
-		System.err.println("entering or");
+//		System.err.println("entering or");
 	}
 
 	@Override
 	public void exitOrexpr(OrexprContext ctx) {
-		System.err.println("exiting or");
+//		System.err.println("exiting or");
 		if (restaurantStack.size() > 1) {
 			Set<YelpRestaurant> s1 = restaurantStack.pop();
 			Set<YelpRestaurant> s2 = restaurantStack.pop();
@@ -68,19 +64,12 @@ public class QueryListenerFilterCreator extends QueryBaseListener {
 			s1ORs2.addAll(s2);
 			restaurantStack.push(s1ORs2);
 		}
-
 	}
-
-	@Override
-	public void enterAndexpr(AndexprContext ctx) {
-		System.err.println("entering and");
-	}
-
 	@Override
 	public void exitAndexpr(AndexprContext ctx) {
-		System.err.println("exiting and");
-		System.out.println("and" + ctx.getChildCount());
-		System.out.println(restaurantStack.size());
+//		System.err.println("exiting and");
+	//	System.out.println("and" + ctx.getChildCount());
+	//	System.out.println(restaurantStack.size());
 		if (restaurantStack.size() > 1) {
 			Set<YelpRestaurant> s1 = restaurantStack.pop();
 			Set<YelpRestaurant> s2 = restaurantStack.pop();
@@ -99,26 +88,9 @@ public class QueryListenerFilterCreator extends QueryBaseListener {
 			restaurantStack.push(s1ANDs2);
 		}
 	}
-
-	@Override
-	public void enterAtom(AtomContext ctx) {
-		System.err.println("entering atom");
-	}
-
-	@Override
-	public void exitAtom(AtomContext ctx) {
-		System.err.println("exiting atom");
-		;
-	}
-
-	@Override
-	public void enterIn(InContext ctx) {
-
-	}
-
 	@Override
 	public void exitIn(InContext ctx) {
-		System.err.println("exiting in");
+//		System.err.println("exiting in");
 		String neighborhood = ctx.STRING().toString();
 		neighborhood = neighborhood.replaceAll("_", " "); //Replacing underscore with space
 		//System.out.println(neighborhood);
@@ -147,14 +119,8 @@ public class QueryListenerFilterCreator extends QueryBaseListener {
 	}
 
 	@Override
-	public void enterCategory(CategoryContext ctx) {
-		System.err.println("entering category");
-
-	}
-
-	@Override
 	public void exitCategory(CategoryContext ctx) {
-		System.err.println("exiting category");
+//		System.err.println("exiting category");
 		String category = ctx.STRING().toString();
 		// System.out.println("Looking for" + category);
 		Set<YelpRestaurant> categoryRestaurants = new HashSet<>();
@@ -179,14 +145,10 @@ public class QueryListenerFilterCreator extends QueryBaseListener {
 		restaurantStack.push(categoryRestaurants);
 	}
 
-	@Override
-	public void enterName(NameContext ctx) {
-		System.err.println("entering name");
-	}
 
 	@Override
 	public void exitName(NameContext ctx) {
-		System.err.println("exiting name" + ctx.toString());
+//		System.err.println("exiting name" + ctx.toString());
 		Set<YelpRestaurant> nameRestaurants = restaurantsList.stream()
 				.filter(restaurant -> restaurant.getName().equals(ctx.toString())).collect(Collectors.toSet());
 		restaurantStack.push(nameRestaurants);
@@ -196,15 +158,15 @@ public class QueryListenerFilterCreator extends QueryBaseListener {
 
 	@Override
 	public void enterPrice(PriceContext ctx) {
-		System.err.println("entering price");
+//		System.err.println("entering price");
 	}
 
 	@Override
 	public void exitPrice(PriceContext ctx) {
-		System.err.println("exiting price" + ctx.NUM());
+//		System.err.println("exiting price" + ctx.NUM());
 		String operation = ctx.INEQ().toString();
 		int price = Integer.parseInt(ctx.NUM().toString());
-		System.err.println(operation);
+//		System.err.println(operation);
 		Set<YelpRestaurant> priceRestaurants;
 
 		switch (operation) {
@@ -238,10 +200,7 @@ public class QueryListenerFilterCreator extends QueryBaseListener {
 		 */
 		restaurantStack.push(priceRestaurants);
 	}
-
-	@Override
-	public void enterRating(RatingContext ctx) {
-		System.err.println("entering rating");
+	public Set<YelpRestaurant> getQueryRestaurants() {
+		return filteredRestaurants;
 	}
-
 }

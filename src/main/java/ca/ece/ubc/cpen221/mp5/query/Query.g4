@@ -21,7 +21,7 @@ INEQ : ('>' | '>=' | '<' | '<=' | '=');
 root : orexpr | andexpr | atom EOF;
 orexpr : atom(OR atom)*;
 andexpr : atom(AND atom)*;
-atom : in | category | rating | price | name | LPAREN orexpr RPAREN;
+atom : in | category | rating | price | name | LPAREN orexpr RPAREN | LPAREN andexpr RPAREN;
 in : IN LPAREN STRING RPAREN;
 category : CATEGORY LPAREN STRING RPAREN;
 name : NAME LPAREN STRING RPAREN;

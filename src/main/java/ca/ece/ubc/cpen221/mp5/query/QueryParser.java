@@ -316,6 +316,9 @@ public class QueryParser extends Parser {
 			return getRuleContext(OrexprContext.class,0);
 		}
 		public TerminalNode RPAREN() { return getToken(QueryParser.RPAREN, 0); }
+		public AndexprContext andexpr() {
+			return getRuleContext(AndexprContext.class,0);
+		}
 		public AtomContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -339,45 +342,45 @@ public class QueryParser extends Parser {
 		AtomContext _localctx = new AtomContext(_ctx, getState());
 		enterRule(_localctx, 6, RULE_atom);
 		try {
-			setState(50);
+			setState(54);
 			_errHandler.sync(this);
-			switch (_input.LA(1)) {
-			case IN:
+			switch ( getInterpreter().adaptivePredict(_input,3,_ctx) ) {
+			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(41);
 				in();
 				}
 				break;
-			case CATEGORY:
+			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(42);
 				category();
 				}
 				break;
-			case RATING:
+			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
 				setState(43);
 				rating();
 				}
 				break;
-			case PRICE:
+			case 4:
 				enterOuterAlt(_localctx, 4);
 				{
 				setState(44);
 				price();
 				}
 				break;
-			case NAME:
+			case 5:
 				enterOuterAlt(_localctx, 5);
 				{
 				setState(45);
 				name();
 				}
 				break;
-			case LPAREN:
+			case 6:
 				enterOuterAlt(_localctx, 6);
 				{
 				setState(46);
@@ -388,8 +391,17 @@ public class QueryParser extends Parser {
 				match(RPAREN);
 				}
 				break;
-			default:
-				throw new NoViableAltException(this);
+			case 7:
+				enterOuterAlt(_localctx, 7);
+				{
+				setState(50);
+				match(LPAREN);
+				setState(51);
+				andexpr();
+				setState(52);
+				match(RPAREN);
+				}
+				break;
 			}
 		}
 		catch (RecognitionException re) {
@@ -433,13 +445,13 @@ public class QueryParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(52);
+			setState(56);
 			match(IN);
-			setState(53);
+			setState(57);
 			match(LPAREN);
-			setState(54);
+			setState(58);
 			match(STRING);
-			setState(55);
+			setState(59);
 			match(RPAREN);
 			}
 		}
@@ -484,13 +496,13 @@ public class QueryParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(57);
+			setState(61);
 			match(CATEGORY);
-			setState(58);
+			setState(62);
 			match(LPAREN);
-			setState(59);
+			setState(63);
 			match(STRING);
-			setState(60);
+			setState(64);
 			match(RPAREN);
 			}
 		}
@@ -535,13 +547,13 @@ public class QueryParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(62);
+			setState(66);
 			match(NAME);
-			setState(63);
+			setState(67);
 			match(LPAREN);
-			setState(64);
+			setState(68);
 			match(STRING);
-			setState(65);
+			setState(69);
 			match(RPAREN);
 			}
 		}
@@ -585,11 +597,11 @@ public class QueryParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(67);
+			setState(71);
 			match(PRICE);
-			setState(68);
+			setState(72);
 			match(INEQ);
-			setState(69);
+			setState(73);
 			match(NUM);
 			}
 		}
@@ -633,11 +645,11 @@ public class QueryParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(71);
+			setState(75);
 			match(RATING);
-			setState(72);
+			setState(76);
 			match(INEQ);
-			setState(73);
+			setState(77);
 			match(NUM);
 			}
 		}
@@ -653,25 +665,26 @@ public class QueryParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\17N\4\2\t\2\4\3\t"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\17R\4\2\t\2\4\3\t"+
 		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\3\2\3\2\3\2"+
 		"\3\2\3\2\5\2\32\n\2\3\3\3\3\3\3\7\3\37\n\3\f\3\16\3\"\13\3\3\4\3\4\3\4"+
-		"\7\4\'\n\4\f\4\16\4*\13\4\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\5\5\65\n"+
-		"\5\3\6\3\6\3\6\3\6\3\6\3\7\3\7\3\7\3\7\3\7\3\b\3\b\3\b\3\b\3\b\3\t\3\t"+
-		"\3\t\3\t\3\n\3\n\3\n\3\n\3\n\2\2\13\2\4\6\b\n\f\16\20\22\2\2\2M\2\31\3"+
-		"\2\2\2\4\33\3\2\2\2\6#\3\2\2\2\b\64\3\2\2\2\n\66\3\2\2\2\f;\3\2\2\2\16"+
-		"@\3\2\2\2\20E\3\2\2\2\22I\3\2\2\2\24\32\5\4\3\2\25\32\5\6\4\2\26\27\5"+
-		"\b\5\2\27\30\7\2\2\3\30\32\3\2\2\2\31\24\3\2\2\2\31\25\3\2\2\2\31\26\3"+
-		"\2\2\2\32\3\3\2\2\2\33 \5\b\5\2\34\35\7\3\2\2\35\37\5\b\5\2\36\34\3\2"+
-		"\2\2\37\"\3\2\2\2 \36\3\2\2\2 !\3\2\2\2!\5\3\2\2\2\" \3\2\2\2#(\5\b\5"+
-		"\2$%\7\4\2\2%\'\5\b\5\2&$\3\2\2\2\'*\3\2\2\2(&\3\2\2\2()\3\2\2\2)\7\3"+
-		"\2\2\2*(\3\2\2\2+\65\5\n\6\2,\65\5\f\7\2-\65\5\22\n\2.\65\5\20\t\2/\65"+
-		"\5\16\b\2\60\61\7\5\2\2\61\62\5\4\3\2\62\63\7\6\2\2\63\65\3\2\2\2\64+"+
-		"\3\2\2\2\64,\3\2\2\2\64-\3\2\2\2\64.\3\2\2\2\64/\3\2\2\2\64\60\3\2\2\2"+
-		"\65\t\3\2\2\2\66\67\7\7\2\2\678\7\5\2\289\7\r\2\29:\7\6\2\2:\13\3\2\2"+
-		"\2;<\7\t\2\2<=\7\5\2\2=>\7\r\2\2>?\7\6\2\2?\r\3\2\2\2@A\7\n\2\2AB\7\5"+
-		"\2\2BC\7\r\2\2CD\7\6\2\2D\17\3\2\2\2EF\7\f\2\2FG\7\17\2\2GH\7\b\2\2H\21"+
-		"\3\2\2\2IJ\7\13\2\2JK\7\17\2\2KL\7\b\2\2L\23\3\2\2\2\6\31 (\64";
+		"\7\4\'\n\4\f\4\16\4*\13\4\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5"+
+		"\3\5\3\5\5\59\n\5\3\6\3\6\3\6\3\6\3\6\3\7\3\7\3\7\3\7\3\7\3\b\3\b\3\b"+
+		"\3\b\3\b\3\t\3\t\3\t\3\t\3\n\3\n\3\n\3\n\3\n\2\2\13\2\4\6\b\n\f\16\20"+
+		"\22\2\2\2R\2\31\3\2\2\2\4\33\3\2\2\2\6#\3\2\2\2\b8\3\2\2\2\n:\3\2\2\2"+
+		"\f?\3\2\2\2\16D\3\2\2\2\20I\3\2\2\2\22M\3\2\2\2\24\32\5\4\3\2\25\32\5"+
+		"\6\4\2\26\27\5\b\5\2\27\30\7\2\2\3\30\32\3\2\2\2\31\24\3\2\2\2\31\25\3"+
+		"\2\2\2\31\26\3\2\2\2\32\3\3\2\2\2\33 \5\b\5\2\34\35\7\3\2\2\35\37\5\b"+
+		"\5\2\36\34\3\2\2\2\37\"\3\2\2\2 \36\3\2\2\2 !\3\2\2\2!\5\3\2\2\2\" \3"+
+		"\2\2\2#(\5\b\5\2$%\7\4\2\2%\'\5\b\5\2&$\3\2\2\2\'*\3\2\2\2(&\3\2\2\2("+
+		")\3\2\2\2)\7\3\2\2\2*(\3\2\2\2+9\5\n\6\2,9\5\f\7\2-9\5\22\n\2.9\5\20\t"+
+		"\2/9\5\16\b\2\60\61\7\5\2\2\61\62\5\4\3\2\62\63\7\6\2\2\639\3\2\2\2\64"+
+		"\65\7\5\2\2\65\66\5\6\4\2\66\67\7\6\2\2\679\3\2\2\28+\3\2\2\28,\3\2\2"+
+		"\28-\3\2\2\28.\3\2\2\28/\3\2\2\28\60\3\2\2\28\64\3\2\2\29\t\3\2\2\2:;"+
+		"\7\7\2\2;<\7\5\2\2<=\7\r\2\2=>\7\6\2\2>\13\3\2\2\2?@\7\t\2\2@A\7\5\2\2"+
+		"AB\7\r\2\2BC\7\6\2\2C\r\3\2\2\2DE\7\n\2\2EF\7\5\2\2FG\7\r\2\2GH\7\6\2"+
+		"\2H\17\3\2\2\2IJ\7\f\2\2JK\7\17\2\2KL\7\b\2\2L\21\3\2\2\2MN\7\13\2\2N"+
+		"O\7\17\2\2OP\7\b\2\2P\23\3\2\2\2\6\31 (8";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

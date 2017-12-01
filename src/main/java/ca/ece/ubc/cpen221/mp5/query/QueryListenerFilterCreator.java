@@ -9,6 +9,8 @@ import java.util.Stack;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.antlr.v4.runtime.RuleContext;
+
 import ca.ece.ubc.cpen221.mp5.database.YelpRestaurant;
 import ca.ece.ubc.cpen221.mp5.query.QueryParser.AndexprContext;
 import ca.ece.ubc.cpen221.mp5.query.QueryParser.AtomContext;
@@ -23,10 +25,12 @@ import ca.ece.ubc.cpen221.mp5.query.QueryParser.RootContext;
 public class QueryListenerFilterCreator extends QueryBaseListener {
 	Stack<Set<YelpRestaurant>> restaurantStack = new Stack<>();
 	Set<YelpRestaurant> restaurants;
-	List<YelpRestaurant> restaurantsList = new ArrayList<>(restaurants);
+	List<YelpRestaurant> restaurantsList;
 	
 	public QueryListenerFilterCreator (Set<YelpRestaurant> restaurants) {
+		super();
 		this.restaurants = restaurants;
+		restaurantsList = new ArrayList<>(restaurants);
 	}
 	
 	
@@ -83,11 +87,42 @@ public class QueryListenerFilterCreator extends QueryBaseListener {
 	@Override
 	public void enterCategory(CategoryContext ctx) {
 		System.err.println("entering category");
+		
+		
+		
 	}
 
 	@Override
 	public void exitCategory(CategoryContext ctx) {
 		System.err.println("exiting category");
+		String category = ctx.STRING().toString();
+		System.out.println("Looking for" + category);
+		Set<YelpRestaurant> categoryRestaurants = new HashSet<>();
+		/*Set<YelpRestaurant> categoryRestaurants = restaurantsList.stream()
+				.filter(restaurant -> restaurant.getCategories().contains(category))
+				.collect(Collectors.toSet());
+		*/
+		for (YelpRestaurant restaurant: restaurantsList) {
+			List<String> categories = restaurant.getCategories();
+		//	System.out.println(categories.size());
+		//	System.out.println(categories);
+			
+			for (String categoryString : categories) {
+				if (categoryString.equals(category)) categoryRestaurants.add(restaurant)
+			}
+			
+			if (categories.contains(category)) {
+				System.out.println("found");
+				categoryRestaurants.add(restaurant);
+			}
+		}
+		
+		
+		
+		for (YelpRestaurant restaurant: categoryRestaurants) {
+			System.out.println(restaurant.getName());
+		}
+		restaurantStack.push(categoryRestaurants);
 	}
 
 	@Override
@@ -97,11 +132,13 @@ public class QueryListenerFilterCreator extends QueryBaseListener {
 
 	@Override
 	public void exitName(NameContext ctx) {
-		System.err.println("exiting name");
-		Set<YelpRestaurant> restaurants = restaurantsList.stream()
+		System.err.println("exiting name" + ctx.toString());
+		Set<YelpRestaurant> nameRestaurants = restaurantsList.stream()
 				.filter(restaurant -> restaurant.getName().equals(ctx.toString()))
 				.collect(Collectors.toSet());
-		restaurantStack.push(restaurants);
+		restaurantStack.push(nameRestaurants);
+		
+	//	System.out.println(nameRestaurants.toString());
 		}
 
 	@Override
@@ -111,12 +148,17 @@ public class QueryListenerFilterCreator extends QueryBaseListener {
 
 	@Override
 	public void exitPrice(PriceContext ctx) {
-		System.err.println("exiting price");
-		Set<YelpRestaurant> restaurants = restaurantsList.stream()
-				.filter(restaurant -> ctx.toString().equals(restaurant.getPrice()))
+		System.err.println("exiting price" + ctx.NUM());
+		int price = Integer.parseInt(ctx.NUM().toString());
+		
+		System.err.println("HI" + ctx.toString());
+		Set<YelpRestaurant> priceRestaurants = restaurantsList.stream()
+				.filter(restaurant -> restaurant.getPrice() == price)
 				.collect(Collectors.toSet());
-		restaurantStack.push(restaurants);
-		}
+		/*for (YelpRestaurant restaurant: priceRestaurants) {
+			System.out.println(restaurant.getName());
+		}*/
+		restaurantStack.push(priceRestaurants);
 	}
 
 	@Override
@@ -124,8 +166,4 @@ public class QueryListenerFilterCreator extends QueryBaseListener {
 		System.err.println("entering rating");
 	}
 
-	@Override
-	public void exitRating(RatingContext ctx) {
-		System.err.println("exiting rating");
-	}
 }

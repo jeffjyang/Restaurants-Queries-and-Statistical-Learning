@@ -16,8 +16,10 @@ import org.junit.Test;
 
 import ca.ece.ubc.cpen221.mp5.database.YelpDatabase;
 import ca.ece.ubc.cpen221.mp5.query.Query;
+import ca.ece.ubc.cpen221.mp5.query.QueryDatabaseListener;
 import ca.ece.ubc.cpen221.mp5.query.QueryLexer;
 import ca.ece.ubc.cpen221.mp5.query.QueryListener;
+import ca.ece.ubc.cpen221.mp5.query.QueryListenerFilterCreator;
 import ca.ece.ubc.cpen221.mp5.query.QueryListenerPrintEverything;
 import ca.ece.ubc.cpen221.mp5.query.QueryParser;
 
@@ -40,6 +42,8 @@ public class QueryTests {
 	// https://stackoverflow.com/questions/23809005/how-to-display-antlr-tree-gui
 	public static void main(String[] args) {
 		String query = "in(Telegraph Ave) && (category(Chinese) || category(Italian)) && price <= 2)";
+		YelpDatabase database = new YelpDatabase(restaurantJSON, reviewJSON, userJSON);
+		
 		query = replaceWhiteSpace(query);
 		CharStream stream = CharStreams.fromString(query);
 		QueryLexer lexer = new QueryLexer(stream);
@@ -47,7 +51,8 @@ public class QueryTests {
 		QueryParser parser = new QueryParser(tokens);
 		ParseTree tree = parser.root();
 		ParseTreeWalker walker = new ParseTreeWalker();
-		QueryListener listener = new QueryListenerPrintEverything();
+		//QueryListener listener = new QueryListenerPrintEverything();
+		QueryListener listener = new QueryListenerFilterCreator(database.getRestaurants());
 		walker.walk(listener, tree);
 		System.out.println(tree.toStringTree(parser));
 
@@ -73,12 +78,9 @@ public class QueryTests {
 			else if (openBracket && queryArray[index] == ' ') {
 				queryArray[index] = '_';
 			}
-			System.out.println(String.valueOf(queryArray));
 		}
 		
 		return String.valueOf(queryArray);
-		
-		
 	}
 
 }

@@ -1,4 +1,4 @@
-package test;
+package ca.ubc.ece.cpen221.mp5.tests;
 
 import static org.junit.Assert.assertTrue;
 

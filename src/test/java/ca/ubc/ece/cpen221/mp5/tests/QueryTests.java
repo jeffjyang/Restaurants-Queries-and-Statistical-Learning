@@ -30,11 +30,11 @@ public class QueryTests {
 
 	@Test
 	public void Test00() {
-		YelpDatabase database = new YelpDatabase(restaurantJSON, reviewJSON, userJSON);
-		String query = "category(Chinese)";
-		Query queryObj = new Query();
-
-		queryObj.queryDatabase(database, query);
+//		YelpDatabase database = new YelpDatabase(restaurantJSON, reviewJSON, userJSON);
+//		String query = "category(Chinese)";
+//		Query queryObj = new Query();
+//
+//		queryObj.queryDatabase(database, query);
 
 	}
 

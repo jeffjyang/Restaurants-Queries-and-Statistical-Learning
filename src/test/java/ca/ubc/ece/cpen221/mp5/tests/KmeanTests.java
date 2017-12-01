@@ -20,11 +20,6 @@ import org.junit.Test;
 import ca.ece.ubc.cpen221.mp5.database.Coordinate;
 import ca.ece.ubc.cpen221.mp5.database.YelpDatabase;
 
-
-
-/**
- * Created by harryyao on 2017-11-27.
- */
 public class KmeanTests {
     private String restaurantJSON = "data/restaurants.json";
     private String reviewJSON = "data/reviews.json";
@@ -37,7 +32,7 @@ public class KmeanTests {
 	YelpDatabase database = new YelpDatabase(restaurantJSON, reviewJSON, userJSON);
         String jsonCluster = database.kMeansClusters_json(k);
 
-        System.out.println(jsonCluster);
+  //      System.out.println(jsonCluster);
 
         try(PrintWriter out = new PrintWriter( "visualize/voronoi.json" )  ){
             out.println(jsonCluster);
@@ -73,7 +68,7 @@ public class KmeanTests {
 	}
 	
 	if (clusters.keySet().size() != numClusters) {
-	    System.out.println(clusters.keySet().size() );
+	 //   System.out.println(clusters.keySet().size() );
 	    return false;
 	}
 	

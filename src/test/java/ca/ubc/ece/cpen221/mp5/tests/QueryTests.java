@@ -43,47 +43,47 @@ public class QueryTests {
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
-		String query = "rating = 3.5";
-		YelpDatabase database = new YelpDatabase(restaurantJSON, reviewJSON, userJSON);
-		
-		query = replaceWhiteSpace(query);
-		CharStream stream = CharStreams.fromString(query);
-		QueryLexer lexer = new QueryLexer(stream);
-		TokenStream tokens = new CommonTokenStream(lexer);
-		QueryParser parser = new QueryParser(tokens);
-		ParseTree tree = parser.root();
-		ParseTreeWalker walker = new ParseTreeWalker();
-		//QueryListener listener = new QueryListenerPrintEverything();
-		QueryListener listener = new QueryListenerFilterCreator(database.getRestaurants());
-		walker.walk(listener, tree);
-		System.out.println(tree.toStringTree(parser));
-
-		// show AST in GUI
-		JFrame frame = new JFrame("Antlr AST");
-		JPanel panel = new JPanel();
-		TreeViewer viewr = new TreeViewer(Arrays.asList(parser.getRuleNames()), tree);
-		viewr.setScale(1.5);// scale a little
-		panel.add(viewr);
-		frame.add(panel);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(200, 200);
-		frame.setVisible(true);
-	}
-	
-	private static String replaceWhiteSpace(String query) {
-		boolean openBracket = false;
-		char[] queryArray = query.toCharArray();
-		
-		for (int index = 0; index < queryArray.length; index++) {
-			if (queryArray[index] == '(') openBracket = true;
-			else if (queryArray[index] == ')') openBracket = false;
-			else if (openBracket && queryArray[index] == ' ') {
-				queryArray[index] = '_';
-			}
-		}
-		
-		return String.valueOf(queryArray);
-	}
+//	public static void main(String[] args) {
+//		String query = "rating = 3.5";
+//		YelpDatabase database = new YelpDatabase(restaurantJSON, reviewJSON, userJSON);
+//		
+//		query = replaceWhiteSpace(query);
+//		CharStream stream = CharStreams.fromString(query);
+//		QueryLexer lexer = new QueryLexer(stream);
+//		TokenStream tokens = new CommonTokenStream(lexer);
+//		QueryParser parser = new QueryParser(tokens);
+//		ParseTree tree = parser.root();
+//		ParseTreeWalker walker = new ParseTreeWalker();
+//		//QueryListener listener = new QueryListenerPrintEverything();
+//		QueryListener listener = new QueryListenerFilterCreator(database.getRestaurants());
+//		walker.walk(listener, tree);
+//		System.out.println(tree.toStringTree(parser));
+//
+//		// show AST in GUI
+//		JFrame frame = new JFrame("Antlr AST");
+//		JPanel panel = new JPanel();
+//		TreeViewer viewr = new TreeViewer(Arrays.asList(parser.getRuleNames()), tree);
+//		viewr.setScale(1.5);// scale a little
+//		panel.add(viewr);
+//		frame.add(panel);
+//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		frame.setSize(200, 200);
+//		frame.setVisible(true);
+//	}
+//	
+//	private static String replaceWhiteSpace(String query) {
+//		boolean openBracket = false;
+//		char[] queryArray = query.toCharArray();
+//		
+//		for (int index = 0; index < queryArray.length; index++) {
+//			if (queryArray[index] == '(') openBracket = true;
+//			else if (queryArray[index] == ')') openBracket = false;
+//			else if (openBracket && queryArray[index] == ' ') {
+//				queryArray[index] = '_';
+//			}
+//		}
+//		
+//		return String.valueOf(queryArray);
+//	}
 
 }

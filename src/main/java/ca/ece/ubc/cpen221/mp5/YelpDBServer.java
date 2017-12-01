@@ -1,6 +1,5 @@
 package ca.ece.ubc.cpen221.mp5;
 
-import ca.ece.ubc.cpen221.mp5.database.YelpDatabase;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -9,12 +8,15 @@ import java.net.Socket;
 //Code taken from Fibonnacci server code example
 public class YelpDBServer {
     public int DB_PORT;			// static? 
-  
-    YelpDBWrapper db;
-    
+
+    private YelpDBWrapper db;
+
     private ServerSocket serverSocket;
 
+    private final String illegalRequest = "ERR: ILLEGAL_REQUEST";
+    
     public YelpDBServer(int port) throws IOException {
+	System.out.println("Starting server");
 	final int DB_PORT = port;
 	this.DB_PORT = DB_PORT;
 	serverSocket = new ServerSocket(DB_PORT);
@@ -29,7 +31,6 @@ public class YelpDBServer {
      * @throws IOException
      *             if the main server socket is broken
      */
-
 
     public void serve() throws IOException {
 	while (true) {
@@ -57,16 +58,6 @@ public class YelpDBServer {
 	}
     }
 
-    //    public void serve() throws IOException {
-    //	while (true) {
-    //	    Socket socket = serverSocket.accept();
-    //	    try {
-    //		handle(socket);
-    //	    } finally {
-    //		socket.close();
-    //	    }
-    //	}
-    //    }
 
 
     /**
@@ -82,64 +73,80 @@ public class YelpDBServer {
 
 	BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 	PrintWriter out = new PrintWriter(new OutputStreamWriter(
-		socket.getOutputStream()));
+		socket.getOutputStream()), true);
 
 	try {
 	    for (String line = in.readLine(); line != null; line = in.readLine()) {
 		System.err.println("request: " + line);
 		try {
 
-		    
-		    
 		    System.err.println("reply: ");
 		    //TODO: finish adding queries
 		    // get restaurant query	// TODO ghetto af 
 		    if (line.contains("GETRESTAURANT")) {
 			String[] split = line.split("GETRESTAURANT");
+			String json = "";
 			for (String token : split) {
-			    if (!"".equals(token)) {
-				out.print(db.getRestaurant(token));
-			    }
+			    json += token;
 			}
+			System.out.println(db.getRestaurant(json.trim()));
+			out.println(db.getRestaurant(json.trim()));
 		    }
 		    // ADDUSER
 		    else if (line.contains("ADDUSER")) {
 			String[] split = line.split("ADDUSER");
-			String json = split.toString().trim();
-			out.print(db.addUser(json));
+			String json = "";
+			for (String token : split) {
+			    json += token;
+			}
+			out.println(db.addUser(json));
 		    }
-		    
+
 		    // ADDRESTAURANT
 		    else if (line.contains("ADDRESTAURANT")) {
 			String[] split = line.split("ADDRESTAURANT");
-			String json = split.toString().trim();
-			out.print(db.addRestaurant(json));
+			String json = "";
+			for (String token : split) {
+			    json += token;
+			}
+			out.println(db.addRestaurant(json));
 		    }
-		   
+
 		    // ADDREVIEW 
 		    else if (line.contains("ADDREVIEW")) {
 			String[] split = line.split("ADDREVIEW");
-			String json = split.toString().trim();
-			out.print(db.addReview(json));
+			String json = "";
+			for (String token : split) {
+			    json += token;
+			}
+			out.println(db.addReview(json));
 		    }
+
+		    // QUERY
 		    else if (line.contains("QUERY")) {
 			String[] split = line.split("QUERY");
-			String json = split.toString().trim();
-			out.print(db.getQuery(json));
+			String json = "";
+			for (String token : split) {
+			    json += token;
+			}
+			out.println(db.getQuery(json));
+			//out.flush();
 		    }
 
-
-
+		    // not a valid input 
+		    else {
+			out.println(illegalRequest);
+		    }
 
 
 		} catch (Exception e) { //Query exception here
 		    e.printStackTrace();
 		}
-		out.flush();
 	    }
 	} finally {
 	    out.close();
 	    in.close();
+	    System.out.println("client disconnected");
 	}
 
     }

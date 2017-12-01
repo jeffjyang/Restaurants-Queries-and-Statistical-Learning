@@ -96,7 +96,7 @@ public class YelpRestaurant implements Business{
 		.add("open", this.open) //TODO: Confirm x is longitude
 		.add("url", this.url)
 		.add("longitude", this.longitude)
-		.add("neighborhoods", neighborhoodsJson.toString())
+		.add("neighborhoods", neighborhoodsJson)//.toString())
 		.add("business_id", this.businessId) //TODO: What is cluster weight?
 		.add("name", this.name) 
 		.add("categories", categoriesJson.toString()) 

@@ -1,4 +1,4 @@
-// Generated from C:/Users/Harry/Documents/GitHub/f17-mp5-yaoharry_jeffjyang/src/main/java/ca/ece/ubc/cpen221/mp5/query/Query.g4 by ANTLR 4.7
+// Generated from Query.g4 by ANTLR 4.7
 
 package ca.ece.ubc.cpen221.mp5.query;
 

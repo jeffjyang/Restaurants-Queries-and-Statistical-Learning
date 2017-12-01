@@ -25,7 +25,7 @@ import ca.ece.ubc.cpen221.mp5.query.QueryParser.RootContext;
 public class QueryListenerFilterCreator extends QueryBaseListener {
 	private Stack<Set<YelpRestaurant>> restaurantStack = new Stack<>();
 	private List<YelpRestaurant> restaurantsList;
-	Set<YelpRestaurant> filteredRestaurants;
+	private Set<YelpRestaurant> filteredRestaurants;
 
 	/**
 	 * Constructs a QueryListener from a set of restaurants
@@ -91,8 +91,7 @@ public class QueryListenerFilterCreator extends QueryBaseListener {
 	 */
 	@Override
 	public void exitIn(InContext ctx) {
-		String neighborhood = ctx.STRING().toString();
-		neighborhood = neighborhood.replaceAll("_", " "); // Replacing underscore with space
+		String neighborhood = ctx.STRING().toString().replaceAll("_", " "); // Replacing underscore with space
 		Set<YelpRestaurant> neighborhoodRestaurants = new HashSet<>();
 
 		for (YelpRestaurant restaurant : restaurantsList) {
@@ -113,7 +112,7 @@ public class QueryListenerFilterCreator extends QueryBaseListener {
 	 */
 	@Override
 	public void exitCategory(CategoryContext ctx) {
-		String category = ctx.STRING().toString();
+		String category = ctx.STRING().toString().replaceAll("_", " ");
 		Set<YelpRestaurant> categoryRestaurants = new HashSet<>();
 
 		for (YelpRestaurant restaurant : restaurantsList) {
@@ -135,8 +134,10 @@ public class QueryListenerFilterCreator extends QueryBaseListener {
 	 */
 	@Override
 	public void exitName(NameContext ctx) {
+		final String name = ctx.STRING().toString().replaceAll("_", " ");
+		
 		Set<YelpRestaurant> nameRestaurants = restaurantsList.stream()
-				.filter(restaurant -> restaurant.getName().equals(ctx.toString())).collect(Collectors.toSet());
+				.filter(restaurant -> restaurant.getName().equals(name)).collect(Collectors.toSet());
 		restaurantStack.push(nameRestaurants);
 	}
 
@@ -149,7 +150,7 @@ public class QueryListenerFilterCreator extends QueryBaseListener {
 	@Override
 	public void exitRating(RatingContext ctx) {
 		String operation = ctx.INEQ().toString();
-		int rating = Integer.parseInt(ctx.NUM().toString());
+		double rating = Double.parseDouble(ctx.NUM().toString());
 		Set<YelpRestaurant> ratingRestaurants;
 
 		switch (operation) {

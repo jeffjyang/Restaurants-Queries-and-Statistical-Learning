@@ -1,4 +1,4 @@
-// Generated from C:/Users/Harry/Documents/GitHub/f17-mp5-yaoharry_jeffjyang/src/main/java/ca/ece/ubc/cpen221/mp5/query/Query.g4 by ANTLR 4.7
+// Generated from Query.g4 by ANTLR 4.7
 
 package ca.ece.ubc.cpen221.mp5.query;
 
@@ -109,11 +109,6 @@ public class QueryParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof QueryListener ) ((QueryListener)listener).exitRoot(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof QueryVisitor ) return ((QueryVisitor<? extends T>)visitor).visitRoot(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final RootContext root() throws RecognitionException {
@@ -182,11 +177,6 @@ public class QueryParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof QueryListener ) ((QueryListener)listener).exitOrexpr(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof QueryVisitor ) return ((QueryVisitor<? extends T>)visitor).visitOrexpr(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final OrexprContext orexpr() throws RecognitionException {
@@ -249,11 +239,6 @@ public class QueryParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof QueryListener ) ((QueryListener)listener).exitAndexpr(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof QueryVisitor ) return ((QueryVisitor<? extends T>)visitor).visitAndexpr(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -327,11 +312,6 @@ public class QueryParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof QueryListener ) ((QueryListener)listener).exitAtom(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof QueryVisitor ) return ((QueryVisitor<? extends T>)visitor).visitAtom(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -420,11 +400,6 @@ public class QueryParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof QueryListener ) ((QueryListener)listener).exitIn(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof QueryVisitor ) return ((QueryVisitor<? extends T>)visitor).visitIn(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final InContext in() throws RecognitionException {
@@ -470,11 +445,6 @@ public class QueryParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof QueryListener ) ((QueryListener)listener).exitCategory(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof QueryVisitor ) return ((QueryVisitor<? extends T>)visitor).visitCategory(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -522,11 +492,6 @@ public class QueryParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof QueryListener ) ((QueryListener)listener).exitName(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof QueryVisitor ) return ((QueryVisitor<? extends T>)visitor).visitName(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final NameContext name() throws RecognitionException {
@@ -572,11 +537,6 @@ public class QueryParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof QueryListener ) ((QueryListener)listener).exitPrice(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof QueryVisitor ) return ((QueryVisitor<? extends T>)visitor).visitPrice(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 
 	public final PriceContext price() throws RecognitionException {
@@ -619,11 +579,6 @@ public class QueryParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof QueryListener ) ((QueryListener)listener).exitRating(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof QueryVisitor ) return ((QueryVisitor<? extends T>)visitor).visitRating(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 

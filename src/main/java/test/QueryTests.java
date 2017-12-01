@@ -44,7 +44,7 @@ public class QueryTests {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		String query = "in(Telegraph Ave) && (category(Chinese) || category(Italian)) && price <= 2";
+		String query = "in(Telegraph Ave)";
 		YelpDatabase database = new YelpDatabase(restaurantJSON, reviewJSON, userJSON);
 		
 		query = replaceWhiteSpace(query);

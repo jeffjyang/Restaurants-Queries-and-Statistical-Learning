@@ -268,6 +268,13 @@ public class YelpRestaurant implements Business{
     public int getRating() {
 	return price;
     }
-
-
+    
+    @Override 
+    public boolean equals(Object obj) {
+    	if (!(obj instanceof YelpRestaurant)) {
+    		return false;
+    	}
+    	YelpRestaurant restaurant = (YelpRestaurant) obj;
+    	return businessId.equals(restaurant.getBusinessId());
+    }
 }

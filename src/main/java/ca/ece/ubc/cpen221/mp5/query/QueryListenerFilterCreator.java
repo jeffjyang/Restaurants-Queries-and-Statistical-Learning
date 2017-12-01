@@ -23,183 +23,206 @@ import ca.ece.ubc.cpen221.mp5.query.QueryParser.RatingContext;
 import ca.ece.ubc.cpen221.mp5.query.QueryParser.RootContext;
 
 public class QueryListenerFilterCreator extends QueryBaseListener {
-	Stack<Set<YelpRestaurant>> restaurantStack = new Stack<>();
-	Set<YelpRestaurant> restaurants;
-	List<YelpRestaurant> restaurantsList;
+	private Stack<Set<YelpRestaurant>> restaurantStack = new Stack<>();
+	private List<YelpRestaurant> restaurantsList;
 	Set<YelpRestaurant> filteredRestaurants;
 
+	/**
+	 * Constructs a QueryListener from a set of restaurants
+	 * 
+	 * @param restaurants from the total list of restaurants
+	 */
 	public QueryListenerFilterCreator(Set<YelpRestaurant> restaurants) {
 		super();
-		this.restaurants = restaurants;
 		restaurantsList = new ArrayList<>(restaurants);
 	}
-
+	
+	/**
+	 * Making the set of filtered restaurants the top/last element of the stack
+	 * 
+	 * @param RootContext grammar for root
+	 */
 	@Override
 	public void exitRoot(RootContext ctx) {
-//		System.err.println("exiting root");
-
-		//System.out.println(restaurantStack.size());
-
 		Set<YelpRestaurant> combinedSet = restaurantStack.pop();
-		//System.out.println("CombinedSet" + combinedSet.size());
-		for (YelpRestaurant rest : combinedSet) {
-		//	System.out.println(rest.getName());
-		}
+
 		filteredRestaurants = combinedSet;
 	}
 
-	@Override
-	public void enterOrexpr(OrexprContext ctx) {
-//		System.err.println("entering or");
-	}
-
+	/**
+	 * Replacing the OR sets to be the union of the two sets
+	 * 
+	 * @param OrexprContext grammar for ORexpr
+	 */
 	@Override
 	public void exitOrexpr(OrexprContext ctx) {
-//		System.err.println("exiting or");
 		if (restaurantStack.size() > 1) {
 			Set<YelpRestaurant> s1 = restaurantStack.pop();
 			Set<YelpRestaurant> s2 = restaurantStack.pop();
 			Set<YelpRestaurant> s1ORs2 = new HashSet<>();
+			
 			s1ORs2.addAll(s1);
 			s1ORs2.addAll(s2);
 			restaurantStack.push(s1ORs2);
 		}
 	}
+	
+	/**
+	 * Replacing the AND sets to be the intersection of the two sets
+	 * 
+	 * @param AndexprContext grammar for ANDexpr
+	 */
 	@Override
 	public void exitAndexpr(AndexprContext ctx) {
-//		System.err.println("exiting and");
-	//	System.out.println("and" + ctx.getChildCount());
-	//	System.out.println(restaurantStack.size());
 		if (restaurantStack.size() > 1) {
 			Set<YelpRestaurant> s1 = restaurantStack.pop();
 			Set<YelpRestaurant> s2 = restaurantStack.pop();
-			/*
-			for (YelpRestaurant rest : s1) {
-				System.out.println(rest.getName());
-			}
-			for (YelpRestaurant rest : s2) {
-				System.out.println(rest.getName());
-			}
-			*/
-			
 			Set<YelpRestaurant> s1ANDs2 = new HashSet<>(s1);
-			s1ANDs2.retainAll(s2);
 
+			s1ANDs2.retainAll(s2);
 			restaurantStack.push(s1ANDs2);
 		}
 	}
+	
+	/**
+	 * Adds a set of the restaurants in the given neighbor dictated by ctx to the stack
+	 * 
+	 * @param InContext defines the grammar for In
+	 */
 	@Override
 	public void exitIn(InContext ctx) {
-//		System.err.println("exiting in");
 		String neighborhood = ctx.STRING().toString();
-		neighborhood = neighborhood.replaceAll("_", " "); //Replacing underscore with space
-		//System.out.println(neighborhood);
+		neighborhood = neighborhood.replaceAll("_", " "); // Replacing underscore with space
 		Set<YelpRestaurant> neighborhoodRestaurants = new HashSet<>();
-		/*
-		 * Set<YelpRestaurant> categoryRestaurants = restaurantsList.stream()
-		 * .filter(restaurant -> restaurant.getCategories().contains(category))
-		 * .collect(Collectors.toSet());
-		 */
+
 		for (YelpRestaurant restaurant : restaurantsList) {
 			List<String> neighborhoods = restaurant.getNeighborhoods();
-		//	System.out.println(neighborhoods);
 			for (String neighborhoodString : neighborhoods) {
 				neighborhoodString = neighborhoodString.replaceAll("\"", "");
-			//	 System.out.println(neighborhoodString + "Check" + neighborhood);
 				if (neighborhoodString.equals(neighborhood))
 					neighborhoodRestaurants.add(restaurant);
 			}
 		}
-		for (YelpRestaurant restaurant : neighborhoodRestaurants) {
-		//	System.out.println(restaurant.getName());
-		}
-	//	System.out.println(neighborhoodRestaurants.size());
 		restaurantStack.push(neighborhoodRestaurants);
-		
 	}
 
+	/**
+	 * Adds a set of the restaurants in the given category dictated by ctx to the stack
+	 * 
+	 * @param CategoryContext defines the grammar for Category
+	 */
 	@Override
 	public void exitCategory(CategoryContext ctx) {
-//		System.err.println("exiting category");
 		String category = ctx.STRING().toString();
-		// System.out.println("Looking for" + category);
 		Set<YelpRestaurant> categoryRestaurants = new HashSet<>();
-		/*
-		 * Set<YelpRestaurant> categoryRestaurants = restaurantsList.stream()
-		 * .filter(restaurant -> restaurant.getCategories().contains(category))
-		 * .collect(Collectors.toSet());
-		 */
+
 		for (YelpRestaurant restaurant : restaurantsList) {
 			List<String> categories = restaurant.getCategories();
 
 			for (String categoryString : categories) {
 				categoryString = categoryString.replaceAll("\"", "");
-				// System.out.println(categoryString + "Check" + category);
 				if (categoryString.equals(category))
 					categoryRestaurants.add(restaurant);
 			}
 		}
-		for (YelpRestaurant restaurant : categoryRestaurants) {
-			//System.out.println(restaurant.getName());
-		}
 		restaurantStack.push(categoryRestaurants);
 	}
 
-
+	/**
+	 * Adds a set of the restaurants with the name dictated by ctx to the stack
+	 * 
+	 * @param NameContext defines the grammar for Name
+	 */
 	@Override
 	public void exitName(NameContext ctx) {
-//		System.err.println("exiting name" + ctx.toString());
 		Set<YelpRestaurant> nameRestaurants = restaurantsList.stream()
 				.filter(restaurant -> restaurant.getName().equals(ctx.toString())).collect(Collectors.toSet());
 		restaurantStack.push(nameRestaurants);
-
-		// System.out.println(nameRestaurants.toString());
 	}
 
+	/**
+	 * Adds a set of the restaurants with the given rating and operation 
+	 * dictated by ctx to the stack
+	 * 
+	 * @param RatingContext defines the grammar for the Rating
+	 */
 	@Override
-	public void enterPrice(PriceContext ctx) {
-//		System.err.println("entering price");
-	}
+	public void exitRating(RatingContext ctx) {
+		String operation = ctx.INEQ().toString();
+		int rating = Integer.parseInt(ctx.NUM().toString());
+		Set<YelpRestaurant> ratingRestaurants;
 
+		switch (operation) {
+		case "<=":
+			ratingRestaurants = restaurantsList.stream().filter(restaurant -> restaurant.getRating() <= rating)
+					.collect(Collectors.toSet());
+			break;
+		case "<":
+			ratingRestaurants = restaurantsList.stream().filter(restaurant -> restaurant.getRating() < rating)
+					.collect(Collectors.toSet());
+			break;
+		case ">":
+			ratingRestaurants = restaurantsList.stream().filter(restaurant -> restaurant.getRating() > rating)
+					.collect(Collectors.toSet());
+			break;
+		case ">=":
+			ratingRestaurants = restaurantsList.stream().filter(restaurant -> restaurant.getRating() >= rating)
+					.collect(Collectors.toSet());
+			break;
+		case "=":
+			ratingRestaurants = restaurantsList.stream().filter(restaurant -> restaurant.getRating() == rating)
+					.collect(Collectors.toSet());
+			break;
+		default:
+			ratingRestaurants = null;
+		}
+		restaurantStack.push(ratingRestaurants);
+	}
+	
+	/**
+	 * Adds a set of the restaurants with the given price and operation 
+	 * dictated by ctx to the stack
+	 * 
+	 * @param PriceContext defines the grammar for the Price
+	 */	
 	@Override
 	public void exitPrice(PriceContext ctx) {
-//		System.err.println("exiting price" + ctx.NUM());
 		String operation = ctx.INEQ().toString();
 		int price = Integer.parseInt(ctx.NUM().toString());
-//		System.err.println(operation);
 		Set<YelpRestaurant> priceRestaurants;
 
 		switch (operation) {
 		case "<=":
-			priceRestaurants = restaurantsList.stream().filter(restaurant -> restaurant.getPrice() <= price)
+			priceRestaurants = restaurantsList.stream().filter(restaurant -> restaurant.getRating() <= price)
 					.collect(Collectors.toSet());
 			break;
 		case "<":
-			priceRestaurants = restaurantsList.stream().filter(restaurant -> restaurant.getPrice() < price)
+			priceRestaurants = restaurantsList.stream().filter(restaurant -> restaurant.getRating() < price)
 					.collect(Collectors.toSet());
 			break;
 		case ">":
-			priceRestaurants = restaurantsList.stream().filter(restaurant -> restaurant.getPrice() > price)
+			priceRestaurants = restaurantsList.stream().filter(restaurant -> restaurant.getRating() > price)
 					.collect(Collectors.toSet());
 			break;
 		case ">=":
-			priceRestaurants = restaurantsList.stream().filter(restaurant -> restaurant.getPrice() >= price)
+			priceRestaurants = restaurantsList.stream().filter(restaurant -> restaurant.getRating() >= price)
 					.collect(Collectors.toSet());
 			break;
 		case "=":
-			priceRestaurants = restaurantsList.stream().filter(restaurant -> restaurant.getPrice() == price)
+			priceRestaurants = restaurantsList.stream().filter(restaurant -> restaurant.getRating() == price)
 					.collect(Collectors.toSet());
 			break;
 		default:
 			priceRestaurants = null;
 		}
-
-		/*
-		 * for (YelpRestaurant restaurant: priceRestaurants) {
-		 * System.out.println(restaurant.getName()); }
-		 */
 		restaurantStack.push(priceRestaurants);
 	}
+	
+	/**
+	 * Returns the filtered set of restaurants 
+	 * 
+	 * @return Set<YelpRestaurant> set containing the filtered restaurant matching the query
+	 */
 	public Set<YelpRestaurant> getQueryRestaurants() {
 		return filteredRestaurants;
 	}

@@ -10,7 +10,6 @@ import javax.json.JsonObject;
 
 public class YelpRestaurant implements Business{
 
-
     private boolean open;
     private String url;
     private double longitude;
@@ -30,7 +29,6 @@ public class YelpRestaurant implements Business{
     private int price;
 
     private List<String> reviews;		// TODO change YelpReview to review ids? 
-
 
     // TODO lmao no way this is right 
     public YelpRestaurant(JsonObject obj) {
@@ -93,7 +91,6 @@ public class YelpRestaurant implements Business{
 	    schoolsJsonBuilder.add(school);
 	}
 	JsonArray schoolsJson = schoolsJsonBuilder.build();
-	
 	
 	JsonObject restaurantJson = Json.createObjectBuilder()
 		.add("open", this.open) //TODO: Confirm x is longitude
@@ -268,7 +265,7 @@ public class YelpRestaurant implements Business{
 	return schoolsCopy;    
     }
 
-    public int getPrice() {
+    public int getRating() {
 	return price;
     }
 

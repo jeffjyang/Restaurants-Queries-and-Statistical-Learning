@@ -88,7 +88,7 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 
 		// TODO lmao no way this is right
 		ToDoubleBiFunction<MP5Db<YelpRestaurant>, String> fn = (x, y) -> b
-				+ a * x.getMatches(y).iterator().next().getPrice();
+				+ a * x.getMatches(y).iterator().next().getRating();
 		return fn;
 	}
 
@@ -116,7 +116,7 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 		double sum = 0;
 
 		for (YelpRestaurant restaurant : userRestaurants) {
-			sum += restaurant.getPrice();
+			sum += restaurant.getRating();
 		}
 		return sum / userRestaurants.size();
 	}
@@ -126,7 +126,7 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 		// calculate distance from mean for each element
 		List<Double> distFromMeanPrices = new ArrayList<>();
 		for (YelpRestaurant restaurant : userRestaurants) {
-			double dist = restaurant.getPrice() - meanPrice;
+			double dist = restaurant.getRating() - meanPrice;
 			distFromMeanPrices.add(dist);
 		}
 		return distFromMeanPrices;

@@ -19,7 +19,7 @@ public class YelpRestaurant implements Business{
     private List<String> categories = new ArrayList<>();
     private String state;
     private String type;
-    private int stars;					// TODO update stars 
+    private double stars;					// TODO update stars 
     private String city;
     private String fullAddress;
     private int reviewCount;
@@ -39,7 +39,7 @@ public class YelpRestaurant implements Business{
 	this.name = obj.getString("name");
 	this.state = obj.getString("state");
 	this.type = obj.getString("type");
-	this.stars = obj.getInt("stars");
+	this.stars = obj.getJsonNumber("stars").doubleValue();
 	this.city = obj.getString("city");
 	this.fullAddress = obj.getString("full_address");
 	this.reviewCount = obj.getInt("review_count");
@@ -245,7 +245,7 @@ public class YelpRestaurant implements Business{
 	return type;
     }
 
-    public int getStars() {
+    public double getStars() {
 	return stars;
     }
 

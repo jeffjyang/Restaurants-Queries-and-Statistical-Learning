@@ -119,9 +119,9 @@ public class DatabaseTests {
 		YelpRestaurant cafeMilano = database.getRestaurant("NGyFcZHghu1uJ0G-pXJxoQ");
 		YelpRestaurant fondueFred = database.getRestaurant("h_we4E3zofRTf4G0JTEF0A");
 		
-		assertFalse(restaurants.contains(pekingExpress));
+		assertTrue(restaurants.contains(pekingExpress));
 		assertFalse(restaurants.contains(fondueFred));
-		assertFalse(restaurants.contains(cafeMilano));
+		assertTrue(restaurants.contains(cafeMilano));
 	}
 	
 	@Test

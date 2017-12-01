@@ -9,7 +9,7 @@ AND : '&&';
 LPAREN : '(';
 RPAREN : ')';
 IN : 'in';
-NUM :  [1-5] | '\u002E';
+NUM :  ([1-5] | '\u002E')+;
 CATEGORY : 'category';
 NAME : 'name';
 RATING : 'rating';

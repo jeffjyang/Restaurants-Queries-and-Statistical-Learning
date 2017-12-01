@@ -44,7 +44,7 @@ public class QueryTests {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		String query = "in(Telegraph Ave)";
+		String query = "rating = 3.5";
 		YelpDatabase database = new YelpDatabase(restaurantJSON, reviewJSON, userJSON);
 		
 		query = replaceWhiteSpace(query);

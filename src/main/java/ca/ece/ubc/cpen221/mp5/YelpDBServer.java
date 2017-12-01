@@ -9,20 +9,17 @@ import java.net.Socket;
 //Code taken from Fibonnacci server code example
 public class YelpDBServer {
     public int DB_PORT;			// static? 
-    private String restaurantJSON = "data/restaurants.JSON";
-    private String reviewJSON = "data/reviews.json";
-    private String userJSON = "data/users.json";
-
+  
+    YelpDBWrapper db;
+    
     private ServerSocket serverSocket;
-    YelpDatabase database;
 
     public YelpDBServer(int port) throws IOException {
 	final int DB_PORT = port;
 	this.DB_PORT = DB_PORT;
 	serverSocket = new ServerSocket(DB_PORT);
 
-	this.database = new YelpDatabase(restaurantJSON, reviewJSON, userJSON);
-
+	this.db = YelpDBWrapper.getInstance();
 
     }
 
@@ -91,30 +88,49 @@ public class YelpDBServer {
 	    for (String line = in.readLine(); line != null; line = in.readLine()) {
 		System.err.println("request: " + line);
 		try {
+
+		    
+		    
+		    System.err.println("reply: ");
 		    //TODO: finish adding queries
 		    // get restaurant query	// TODO ghetto af 
 		    if (line.contains("GETRESTAURANT")) {
 			String[] split = line.split("GETRESTAURANT");
 			for (String token : split) {
 			    if (!"".equals(token)) {
-				out.print(database.getRestaurantJson(token));
+				out.print(db.getRestaurant(token));
 			    }
 			}
 		    }
+		    // ADDUSER
+		    else if (line.contains("ADDUSER")) {
+			String[] split = line.split("ADDUSER");
+			String json = split.toString().trim();
+			out.print(db.addUser(json));
+		    }
 		    
-		    // TODO ADDUSER
-		    
-		    // TODO ADDRESTAURANT 
-		    
-		    
-		    
-		    
-		    
+		    // ADDRESTAURANT
+		    else if (line.contains("ADDRESTAURANT")) {
+			String[] split = line.split("ADDRESTAURANT");
+			String json = split.toString().trim();
+			out.print(db.addRestaurant(json));
+		    }
+		   
+		    // ADDREVIEW 
+		    else if (line.contains("ADDREVIEW")) {
+			String[] split = line.split("ADDREVIEW");
+			String json = split.toString().trim();
+			out.print(db.addReview(json));
+		    }
+		    else if (line.contains("QUERY")) {
+			String[] split = line.split("QUERY");
+			String json = split.toString().trim();
+			out.print(db.getQuery(json));
+		    }
 
 
 
 
-		    System.err.println("reply: ");
 
 		} catch (Exception e) { //Query exception here
 		    e.printStackTrace();

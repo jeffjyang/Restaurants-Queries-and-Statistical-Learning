@@ -198,23 +198,23 @@ public class QueryListenerFilterCreator extends QueryBaseListener {
 
 		switch (operation) {
 		case "<=":
-			priceRestaurants = restaurantsList.stream().filter(restaurant -> restaurant.getRating() <= price)
+			priceRestaurants = restaurantsList.stream().filter(restaurant -> restaurant.getPrice() <= price)
 					.collect(Collectors.toSet());
 			break;
 		case "<":
-			priceRestaurants = restaurantsList.stream().filter(restaurant -> restaurant.getRating() < price)
+			priceRestaurants = restaurantsList.stream().filter(restaurant -> restaurant.getPrice() < price)
 					.collect(Collectors.toSet());
 			break;
 		case ">":
-			priceRestaurants = restaurantsList.stream().filter(restaurant -> restaurant.getRating() > price)
+			priceRestaurants = restaurantsList.stream().filter(restaurant -> restaurant.getPrice() > price)
 					.collect(Collectors.toSet());
 			break;
 		case ">=":
-			priceRestaurants = restaurantsList.stream().filter(restaurant -> restaurant.getRating() >= price)
+			priceRestaurants = restaurantsList.stream().filter(restaurant -> restaurant.getPrice() >= price)
 					.collect(Collectors.toSet());
 			break;
 		case "=":
-			priceRestaurants = restaurantsList.stream().filter(restaurant -> restaurant.getRating() == price)
+			priceRestaurants = restaurantsList.stream().filter(restaurant -> restaurant.getPrice() == price)
 					.collect(Collectors.toSet());
 			break;
 		default:

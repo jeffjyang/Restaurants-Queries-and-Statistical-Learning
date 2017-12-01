@@ -265,7 +265,7 @@ public class YelpRestaurant implements Business{
 	return schoolsCopy;    
     }
 
-    public int getRating() {
+    public int getPrice() {
 	return price;
     }
     

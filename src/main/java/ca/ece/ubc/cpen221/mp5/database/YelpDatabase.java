@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.function.ToDoubleBiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -71,25 +72,25 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 	ToDoubleBiFunction<MP5Db<YelpRestaurant>, String> fn = (x,y) -> b + a * x.getMatches(y).iterator().next().getPrice(); 
 	return fn;
     }
-    
+
     private synchronized Set<YelpRestaurant> filterRestaurantsRatingGT(int rating) {
-    	List<YelpRestaurant> filtered = new ArrayList<>(restaurants);
-    	
-    	Set<YelpRestaurant> setStream = filtered.stream()
-    			.filter(restaurant -> restaurant.getStars() > rating)
-    			.collect(Collectors.toSet());
+	List<YelpRestaurant> filtered = new ArrayList<>(restaurants);
 
-    	return setStream;
+	Set<YelpRestaurant> setStream = filtered.stream()
+		.filter(restaurant -> restaurant.getStars() > rating)
+		.collect(Collectors.toSet());
+
+	return setStream;
     }
-    
-    public synchronized Set<YelpRestaurant> filterRestaurantNeighbourhood(String neighbourhood) {
-    	List<YelpRestaurant> filtered = new ArrayList<>(restaurants);
-    	
-    	Set<YelpRestaurant> setStream = filtered.stream()
-    			.filter(restaurant -> restaurant.getNeighborhoods().contains(neighbourhood))
-    			.collect(Collectors.toSet());
 
-    	return setStream;
+    public synchronized Set<YelpRestaurant> filterRestaurantNeighbourhood(String neighbourhood) {
+	List<YelpRestaurant> filtered = new ArrayList<>(restaurants);
+
+	Set<YelpRestaurant> setStream = filtered.stream()
+		.filter(restaurant -> restaurant.getNeighborhoods().contains(neighbourhood))
+		.collect(Collectors.toSet());
+
+	return setStream;
     }
 
 
@@ -212,36 +213,36 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 	}
 	return null; 		// TODO see above
     }
-    
+
     // TODO return null value or err code of restaurant doesnt exist?????
     public String getRestaurantJson(String businessID) {
- 	YelpRestaurant restaurant = getRestaurant(businessID);
- 	return restaurant.getJsonString();
-     }
-     
-     
-    
-    // return true if user added successfully, false otherwise 
-    public boolean adduser(String userJson) {
-	
+	YelpRestaurant restaurant = getRestaurant(businessID);
+	return restaurant.getJsonString();
+    }
+
+
+
+    // return json string if user added successfully, empty string otherwise 
+    public String adduser(String userJson) {
+
 	InputStream is = new ByteArrayInputStream(userJson.getBytes());
 	JsonReader reader = Json.createReader(is);
 	JsonObject userInput = reader.readObject();
-	
+
 	if (userInput.isNull("name")) {
-	    return false;
+	    return "";
 	}
-	
+
 	String name = userInput.getString("name");
 	String url = "google.com/eyylmao this is totally a url";
 	String userId = "TotallyARandomStringLel";
-	
+
 	JsonObject reviewCount = Json.createObjectBuilder()
 		.add("funny", 0)
 		.add("userful", 0)
 		.add("cool", 0)
 		.build();
-	
+
 	JsonObject newUserJson = Json.createObjectBuilder()
 		.add("url", url)
 		.add("votes", reviewCount.toString())		// json to string
@@ -253,23 +254,92 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 		.build();
 
 	YelpUser newUser = new YelpUser(newUserJson);
-	
+
 	users.add(newUser);
+
+	return newUserJson.toString();
+
+    }
+
+
+
+
+    // TODO add restaurant  , return empty string if invalid   
+    public String addRestaurant(String restaurantJsonString) {
+	InputStream is = new ByteArrayInputStream(restaurantJsonString.getBytes());
+	JsonReader reader = Json.createReader(is);
+	JsonObject restaurantJson;
+	try {
+	    restaurantJson = reader.readObject();
+	} catch (Exception e) {
+	    e.printStackTrace();
+	    return "";
+	}
+	// TODO check for error in fields
+
+
+
+	String businessId = "VerySecureRandomString";
+
+	JsonObjectBuilder newRestaurantBuilder = Json.createObjectBuilder();
+
+	for (Entry<String, JsonValue> property : restaurantJson.entrySet()) {
+	    newRestaurantBuilder.add(property.getKey(), property.getValue());
+	}
+
+	newRestaurantBuilder.add("business_id", businessId);
+	newRestaurantBuilder.add("stars", 0);
+	JsonObject newRestaurantJson = newRestaurantBuilder.build();
+
+	YelpRestaurant newRestaurant = new YelpRestaurant(newRestaurantJson);
+
+	restaurants.add(newRestaurant);
+
+	return newRestaurantJson.toString();	
+
+    }
+
+
+
+    // TODO error codes 
+    public String addReview(String reviewJsonString) {
+	InputStream is = new ByteArrayInputStream(reviewJsonString.getBytes());
+	JsonReader reader = Json.createReader(is);
+	JsonObject reviewJson;
+	try {
+	    reviewJson = reader.readObject();
+	} catch (Exception e) {
+	    e.printStackTrace();
+	    return "";
+	}
 	
-	return true;
-		
+	// TODO validate json string 
+	
+	
+	String businessId = reviewJson.getString("business_id");
+	String userId = reviewJson.getString("user_id");
+	
+	
+	// TODO error codes 
+	if (this.getRestaurant(businessId) == null) {
+	    return "1";
+	}
+	if (this.getRestaurant(userId) == null) {
+	    return "2";
+	}
+	
+	YelpReview newReview = new YelpReview (reviewJson);
+	
+	reviews.add(newReview);
+	
+	return reviewJson.toString();
+	
+	
     }
     
     
     
-    
-// TODO add restaurant     
-    
-    
-    
-    
-    
-     
+
 
     @Override
     public String kMeansClusters_json(int k) {
@@ -437,7 +507,7 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 	Set<Coordinate> generatedCoords = new HashSet<>();
 
 	for (int index = 0; index < k; index++) {
-	    
+
 	    int seedIndex = randomGenerator.nextInt(restaurantList.size());
 	    Coordinate coord = new Coordinate(restaurantList.get(seedIndex));
 	    restaurantList.remove(seedIndex);

@@ -160,11 +160,11 @@ public class QueryParser extends Parser {
 	}
 
 	public static class OrexprContext extends ParserRuleContext {
-		public List<AndexprContext> andexpr() {
-			return getRuleContexts(AndexprContext.class);
+		public List<AtomContext> atom() {
+			return getRuleContexts(AtomContext.class);
 		}
-		public AndexprContext andexpr(int i) {
-			return getRuleContext(AndexprContext.class,i);
+		public AtomContext atom(int i) {
+			return getRuleContext(AtomContext.class,i);
 		}
 		public List<TerminalNode> OR() { return getTokens(QueryParser.OR); }
 		public TerminalNode OR(int i) {
@@ -197,7 +197,7 @@ public class QueryParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(25);
-			andexpr();
+			atom();
 			setState(30);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
@@ -207,7 +207,7 @@ public class QueryParser extends Parser {
 				setState(26);
 				match(OR);
 				setState(27);
-				andexpr();
+				atom();
 				}
 				}
 				setState(32);
@@ -662,7 +662,7 @@ public class QueryParser extends Parser {
 		"\2\2\2\4\33\3\2\2\2\6#\3\2\2\2\b\64\3\2\2\2\n\66\3\2\2\2\f;\3\2\2\2\16"+
 		"@\3\2\2\2\20E\3\2\2\2\22I\3\2\2\2\24\32\5\4\3\2\25\32\5\6\4\2\26\27\5"+
 		"\b\5\2\27\30\7\2\2\3\30\32\3\2\2\2\31\24\3\2\2\2\31\25\3\2\2\2\31\26\3"+
-		"\2\2\2\32\3\3\2\2\2\33 \5\6\4\2\34\35\7\3\2\2\35\37\5\6\4\2\36\34\3\2"+
+		"\2\2\2\32\3\3\2\2\2\33 \5\b\5\2\34\35\7\3\2\2\35\37\5\b\5\2\36\34\3\2"+
 		"\2\2\37\"\3\2\2\2 \36\3\2\2\2 !\3\2\2\2!\5\3\2\2\2\" \3\2\2\2#(\5\b\5"+
 		"\2$%\7\4\2\2%\'\5\b\5\2&$\3\2\2\2\'*\3\2\2\2(&\3\2\2\2()\3\2\2\2)\7\3"+
 		"\2\2\2*(\3\2\2\2+\65\5\n\6\2,\65\5\f\7\2-\65\5\22\n\2.\65\5\20\t\2/\65"+

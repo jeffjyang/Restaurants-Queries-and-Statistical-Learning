@@ -45,8 +45,9 @@ public class QueryListenerFilterCreator extends QueryBaseListener {
 		System.out.println(restaurantStack.size());
 
 		Set<YelpRestaurant> combinedSet = restaurantStack.pop();
+		System.out.println("CombinedSet" + combinedSet.size());
 		for (YelpRestaurant rest : combinedSet) {
-		//	System.out.println(rest.getName());
+			System.out.println(rest.getName());
 		}
 
 	}
@@ -73,21 +74,30 @@ public class QueryListenerFilterCreator extends QueryBaseListener {
 	@Override
 	public void enterAndexpr(AndexprContext ctx) {
 		System.err.println("entering and");
-		System.out.println("and" + ctx.getChildCount());
-		if (restaurantStack.size() > 1) {
-			Set<YelpRestaurant> s1 = restaurantStack.pop();
-			Set<YelpRestaurant> s2 = restaurantStack.pop();
-			Set<YelpRestaurant> s1ORs2 = new HashSet<>(s1);
-			s1ORs2.retainAll(s2);
-
-			restaurantStack.push(s1ORs2);
-		}
-
 	}
 
 	@Override
 	public void exitAndexpr(AndexprContext ctx) {
 		System.err.println("exiting and");
+		System.out.println("and" + ctx.getChildCount());
+		System.out.println(restaurantStack.size());
+		if (restaurantStack.size() > 1) {
+			Set<YelpRestaurant> s1 = restaurantStack.pop();
+			Set<YelpRestaurant> s2 = restaurantStack.pop();
+			/*
+			for (YelpRestaurant rest : s1) {
+				System.out.println(rest.getName());
+			}
+			for (YelpRestaurant rest : s2) {
+				System.out.println(rest.getName());
+			}
+			*/
+			
+			Set<YelpRestaurant> s1ANDs2 = new HashSet<>(s1);
+			s1ANDs2.retainAll(s2);
+
+			restaurantStack.push(s1ANDs2);
+		}
 	}
 
 	@Override
@@ -129,9 +139,9 @@ public class QueryListenerFilterCreator extends QueryBaseListener {
 			}
 		}
 		for (YelpRestaurant restaurant : neighborhoodRestaurants) {
-			System.out.println(restaurant.getName());
+		//	System.out.println(restaurant.getName());
 		}
-		System.out.println(neighborhoodRestaurants.size());
+	//	System.out.println(neighborhoodRestaurants.size());
 		restaurantStack.push(neighborhoodRestaurants);
 		
 	}
@@ -164,7 +174,7 @@ public class QueryListenerFilterCreator extends QueryBaseListener {
 			}
 		}
 		for (YelpRestaurant restaurant : categoryRestaurants) {
-			System.out.println(restaurant.getName());
+			//System.out.println(restaurant.getName());
 		}
 		restaurantStack.push(categoryRestaurants);
 	}

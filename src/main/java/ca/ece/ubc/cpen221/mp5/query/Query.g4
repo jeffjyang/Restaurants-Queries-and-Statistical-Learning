@@ -19,7 +19,7 @@ WHITESPACE : [ \t\r\n]+ -> skip;
 INEQ : ('>' | '>=' | '<' | '<=' | '=');
 
 root : orexpr | andexpr | atom EOF;
-orexpr : andexpr(OR andexpr)*;
+orexpr : atom(OR atom)*;
 andexpr : atom(AND atom)*;
 atom : in | category | rating | price | name | LPAREN orexpr RPAREN;
 in : IN LPAREN STRING RPAREN;

@@ -7,7 +7,7 @@ import ca.ece.ubc.cpen221.mp5.database.YelpRestaurant;
 
 // singleton thread safe wrapper for YelpDB
 public class YelpDBWrapper {
-    private String restaurantJSON = "data/restaurants.JSON";
+    private String restaurantJSON = "data/restaurants.json";
     private String reviewJSON = "data/reviews.json";
     private String userJSON = "data/users.json";
     private YelpDatabase database;

@@ -26,7 +26,7 @@ import ca.ece.ubc.cpen221.mp5.database.YelpDatabase;
  * Created by harryyao on 2017-11-27.
  */
 public class KmeanTests {
-    private String restaurantJSON = "data/restaurants.JSON";
+    private String restaurantJSON = "data/restaurants.json";
     private String reviewJSON = "data/reviews.json";
     private String userJSON = "data/users.json";
 

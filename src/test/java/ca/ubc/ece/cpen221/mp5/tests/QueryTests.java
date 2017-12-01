@@ -24,7 +24,7 @@ import ca.ece.ubc.cpen221.mp5.query.QueryListenerPrintEverything;
 import ca.ece.ubc.cpen221.mp5.query.QueryParser;
 
 public class QueryTests {
-	private final static String restaurantJSON = "data/restaurants.JSON";
+	private final static String restaurantJSON = "data/restaurants.json";
 	private final static String reviewJSON = "data/reviews.json";
 	private final static String userJSON = "data/users.json";
 

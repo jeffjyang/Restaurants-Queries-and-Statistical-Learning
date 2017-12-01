@@ -58,8 +58,8 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 		QueryListenerFilterCreator listener = new QueryListenerFilterCreator(restaurants);
 		walker.walk(listener, tree);
 		Set<YelpRestaurant> queryRestaurants = listener.getQueryRestaurants();
-
-		return queryRestaurants;
+		System.out.println(queryRestaurants);
+		return queryRestaurants; //Returns null if invalid query
 	}
 
 	@Override

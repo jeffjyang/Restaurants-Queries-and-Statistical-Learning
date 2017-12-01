@@ -123,5 +123,14 @@ public class DatabaseTests {
 		assertFalse(restaurants.contains(fondueFred));
 		assertFalse(restaurants.contains(cafeMilano));
 	}
+	
+	@Test
+    public void testQueryFail() {
+		String queryString = "garbagef";
+		YelpDatabase database = new YelpDatabase(restaurantJSON, reviewJSON, userJSON);
+		Set<YelpRestaurant> restaurants = database.getMatches(queryString);
+
+		assertTrue(restaurants == null);
+	}
 }
 

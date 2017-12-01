@@ -44,9 +44,13 @@ public class QueryListenerFilterCreator extends QueryBaseListener {
 	 */
 	@Override
 	public void exitRoot(RootContext ctx) {
-		Set<YelpRestaurant> combinedSet = restaurantStack.pop();
-
-		filteredRestaurants = combinedSet;
+		if (!restaurantStack.isEmpty()) {
+			Set<YelpRestaurant> combinedSet = restaurantStack.pop();
+			filteredRestaurants = combinedSet;
+		}
+		else {
+			filteredRestaurants = null;
+		}
 	}
 
 	/**

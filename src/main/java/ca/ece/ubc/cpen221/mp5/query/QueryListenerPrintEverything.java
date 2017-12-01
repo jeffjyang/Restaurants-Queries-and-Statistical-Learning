@@ -60,7 +60,7 @@ public class QueryListenerPrintEverything extends QueryBaseListener {
 
 	@Override
 	public void exitIn(InContext ctx) {
-		System.err.println("exiting ib");
+		System.err.println("exiting in");
 	}
 
 	@Override

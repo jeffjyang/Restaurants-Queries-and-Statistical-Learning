@@ -83,11 +83,11 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 	return setStream;
     }
 
-    public synchronized Set<YelpRestaurant> filterRestaurantNeighbourhood(String neighbourhood) {
+    public synchronized Set<YelpRestaurant> filterRestaurantNeighborhood(String neighborhood) {
 	List<YelpRestaurant> filtered = new ArrayList<>(restaurants);
 
 	Set<YelpRestaurant> setStream = filtered.stream()
-		.filter(restaurant -> restaurant.getNeighborhoods().contains(neighbourhood))
+		.filter(restaurant -> restaurant.getNeighborhoods().contains(neighborhood))
 		.collect(Collectors.toSet());
 
 	return setStream;

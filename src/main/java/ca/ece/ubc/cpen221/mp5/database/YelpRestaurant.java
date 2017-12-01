@@ -49,24 +49,24 @@ public class YelpRestaurant implements Business{
 	this.latitude = Double.parseDouble(obj.get("latitude").toString());
 	this.price = obj.getInt("price");
 
-	JsonArray neighbourhoodJson = obj.getJsonArray("neighbourhoods");
-	if (neighbourhoodJson != null) {
-	    for (int index = 0; index < neighbourhoodJson.size(); index++) {
-		this.neighborhoods.add(neighbourhoodJson.get(index).toString());
+	JsonArray neighborhoodJson = obj.getJsonArray("neighborhoods");
+	if (neighborhoodJson != null) {
+	    for (int index = 0; index < neighborhoodJson.size(); index++) {
+	    	this.neighborhoods.add(neighborhoodJson.get(index).toString());
 	    }
 	}
 
 	JsonArray schoolsJson = obj.getJsonArray("schools");
 	if (schoolsJson != null) {
 	    for (int index = 0; index < schoolsJson.size(); index++) {
-		this.schools.add(schoolsJson.get(index).toString());
+	    	this.schools.add(schoolsJson.get(index).toString());
 	    }
 	}
 
 	JsonArray categoriesJson = obj.getJsonArray("categories");
 	if (categoriesJson != null) {
 	    for (int index = 0; index < categoriesJson.size(); index++) {
-		this.categories.add(neighbourhoodJson.get(index).toString());
+	    	this.categories.add(categoriesJson.get(index).toString());
 	    }
 	}
 

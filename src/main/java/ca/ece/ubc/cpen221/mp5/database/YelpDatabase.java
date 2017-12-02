@@ -154,7 +154,6 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 		    break;
 		}
 	    }
-	    // System.out.println("how many times");
 	} while (flag == true);
 
 	clusterJson = getJsonString(clusterList);
@@ -162,6 +161,17 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 	return clusterJson;
     }
 
+    
+    /**
+     * Performs a simple least-squares linear regression on the reviews a user has written.
+     * Returns a ToDoubleBiFunction that can be used to predict the user's rating for a 
+     * particular restaurant
+     * 
+     * @param user
+     * 		the user_id of the user who we wish to predict their ratings
+     * 		Requires: the user exists in the database
+     * @return returns a function that can be used to predict the user's ratings 
+     */
     @Override
     public ToDoubleBiFunction<MP5Db<YelpRestaurant>, String> getPredictorFunction(String user) {
 	YelpUser userObj = getUser(user);
@@ -169,8 +179,7 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 	List<YelpReview> userReviews = getUserReviews(userReviewsString);
 
 	List<YelpRestaurant> userRestaurants = getUserRestaurants(userReviews);
-	System.out.println(userObj.getName() + userObj.getReviewCount());
-	System.out.println("efwe restaurants" + userRestaurants.size());
+
 	
 	double meanPrice = getMeanPrice(userRestaurants);
 	double meanStar = getMeanStar(userReviews);
@@ -180,12 +189,10 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 
 	double Sxx = sumSquaresOfList(distFromMeanPrices);
 	double Syy = sumSquaresOfList(distFromMeanStars);
-	System.out.println("sxx syy " + Sxx + " " + Syy );
 
 
 	
 	double Sxy = sumProductsOfLists(distFromMeanPrices, distFromMeanStars);
-	System.out.println("Sxy" + Sxy);
 
 	double b = Sxy / Sxx;
 	double a = meanStar - b * meanPrice;
@@ -195,11 +202,11 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 	// TODO lmao no way this is right
 	ToDoubleBiFunction<MP5Db<YelpRestaurant>, String> fn = (x, y) -> 
 		b + a * x.getMatches(y).iterator().next().getPrice();
-		System.out.println(b);
-		System.out.println(a);
+
 	return fn;
     }
 
+    // helper method for getPredictorFunction
     private double getMeanStar(List<YelpReview> userReviews) {
 	double sum = 0;
 
@@ -208,9 +215,9 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 	}
 	return sum / userReviews.size();
     }
-
+    
+    // helper method for getPredictorFunction
     private List<Double> distFromMeanStar(List<YelpReview> userReviews, double meanStar) {
-
 	// calculate distance from mean for each element
 	List<Double> distFromMeanStars = new ArrayList<>();
 	for (YelpReview review : userReviews) {
@@ -220,17 +227,17 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 	return distFromMeanStars;
     }
 
+    // helper method for getPredictorFunction
     private double getMeanPrice(List<YelpRestaurant> userRestaurants) {
 	double sum = 0;
-
 	for (YelpRestaurant restaurant : userRestaurants) {
 	    sum += restaurant.getPrice();
 	}
 	return sum / userRestaurants.size();
     }
 
+    // helper method for getPredictorFunction
     private List<Double> distFromMeanPrice(List<YelpRestaurant> userRestaurants, double meanPrice) {
-
 	// calculate distance from mean for each element
 	List<Double> distFromMeanPrices = new ArrayList<>();
 	for (YelpRestaurant restaurant : userRestaurants) {
@@ -240,37 +247,34 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 	return distFromMeanPrices;
     }
 
+    // helper method for getPredictorFunction
     private List<YelpRestaurant> getUserRestaurants(List<YelpReview> userReviews) {
 	List<YelpRestaurant> userRestaurants = new ArrayList<>();
-
 	for (YelpReview review : userReviews) {
 	    String restaurantString = review.getBusinessId();
 	    userRestaurants.add(getRestaurant(restaurantString));
 	}
-
 	return userRestaurants;
     }
-
+    
+    // helper method for getPredictorFunction
     // Converts the user review string list to list of review objects
     private List<YelpReview> getUserReviews(List<String> reviewStrings) {
 	List<YelpReview> reviewObjects = new ArrayList<>();
-
 	for (String reviewString : reviewStrings) {
 	    reviewObjects.add(getReview(reviewString));
 	}
-
 	return reviewObjects;
     }
-
+    
+    // helper method for getPredictorFunction
     private double sumSquaresOfList(List<Double> list) {
-	// Using streams to convert
-
 	// sum distance from means to get Sxx
 	double sumOfSquares = list.stream().map(s -> Math.pow(s, 2.0)).reduce(0.0, Double::sum);
-
 	return sumOfSquares;
     }
 
+    // helper method for getPredictorFunction
     // TODO use streams here
     private double sumProductsOfLists(List<Double> list1, List<Double> list2) {
 	int sum = 0;
@@ -281,6 +285,12 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 	return sum;
     }
 
+    /**
+     * Returns the YelpUser associated with the userID. Returns null if no such user
+     * @param userID
+     * 		the user_id of the YelpUser
+     * @return the YelpUser associated with the userID, null if no such YelpUser exists
+     */
     public YelpUser getUser(String userID) {
 	for (YelpUser user : users) {
 	    if (userID.equals(user.getUserId())) {
@@ -290,7 +300,12 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 	return null; // TODO better way of dealing with this
     }
 
-    // Returns the review object from the review ID
+    /**
+     * Returns the YelpReview associated with the reviewID. Returns null if no such user
+     * @param reviewID
+     * 		the review_id of the YelpReview
+     * @return the YelpReview associated with the reviewID, null if no such YelpReview exists
+     */
     public YelpReview getReview(String reviewID) {
 	for (YelpReview review : reviews) {
 	    if (reviewID.equals(review.getReviewId())) {
@@ -300,7 +315,12 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 	return null; // TODO diddo getUser return null
     }
 
-    // TODO make this private???????
+    /**
+     * Returns the YelpRestaurant associated with the businessID. Returns null if no such user
+     * @param businessID
+     * 		the business_id of the YelpRestaurant
+     * @return the YelpRestaurant associated with the reviewID, null if no such YelpRestaurant exists
+     */
     public YelpRestaurant getRestaurant(String businessID) {
 	for (YelpRestaurant restaurant : restaurants) {
 	    if (businessID.equals(restaurant.getBusinessId())) {
@@ -311,17 +331,36 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
     }
 
 
-
+    /**
+     * Adds a YelpUser to the database
+     * 
+     * @param user
+     * 		the YelpUser we want to add to the database 
+     */
     public void addUser(YelpUser user) {
 	users.add(user);
     }
 
 
-
+    /**
+     * Adds a YelpRestaurant to the database
+     * 
+     * @param restaurant
+     * 		the YelpRestaurant we want to add to the database 
+     */
     public void addRestaurant(YelpRestaurant restaurant) {
 	restaurants.add(restaurant);
     }
 
+    
+    /**
+     * Checks to see if the YelpRestaurant associated with the businessId exists in 
+     * the database
+     * @param businessId
+     * 		the business_id of the YelpRestaurant we want to see if it exists 
+     * 		in the database
+     * @return true if such a YelpRestaurant exists in the database, false otherwise
+     */
     public boolean containsRestaurant(String businessId) {
 	for (YelpRestaurant restaurant : restaurants) {
 	    if (businessId.equals(restaurant.getBusinessId())) {
@@ -330,7 +369,15 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 	}
 	return false;
     }
-
+    
+    /**
+     * Checks to see if the YelpUser associated with the userId exists in 
+     * the database
+     * @param userId
+     * 		the user_id of the YelpRestaurant we want to see if it exists 
+     * 		in the database
+     * @return true if such a YelpUser exists in the database, false otherwise
+     */
     public boolean containsUser(String userId) {
 	for (YelpUser user : users) {
 	    if (userId.equals(user.getUserId())) {

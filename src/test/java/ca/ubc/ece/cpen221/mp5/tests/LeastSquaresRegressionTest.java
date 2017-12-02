@@ -22,9 +22,7 @@ public class LeastSquaresRegressionTest {
 
 	YelpDatabase database = new YelpDatabase(restaurantJSON, reviewJSON, userJSON);
 	ToDoubleBiFunction<MP5Db<YelpRestaurant>, String> fn = database.getPredictorFunction("cQjFUZ3wHW5MEajjiOw8zw");
-	System.out.println(database.getMatches("gclB3ED6uk6viWlolSb_uA").iterator().next().getPrice());
-	System.out.println(fn.applyAsDouble(database, "gclB3ED6uk6viWlolSb_uA"));
-	System.out.println(fn.applyAsDouble(database, "BJKIoQa5N2T_oDlLVf467Q"));
+	
 	assertTrue ( Math.abs(2 * fn.applyAsDouble(database, "gclB3ED6uk6viWlolSb_uA") - fn.applyAsDouble(database, "BJKIoQa5N2T_oDlLVf467Q")) < 10e-5);
     }
 

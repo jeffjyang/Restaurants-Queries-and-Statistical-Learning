@@ -29,11 +29,14 @@ import ca.ece.ubc.cpen221.mp5.query.QueryListenerFilterCreator;
 import ca.ece.ubc.cpen221.mp5.query.QueryParser;
 
 /**
+ * Rep Invariant:	Set of all Restaurant, Review, and User
+ *					Sets are composed of Restaurant, Review, and User objects
+ *					Sets are not null Abstraction function:
+ *					Represents the Yelp database
  * 
- * Rep Invariant:
- * 
- * Abstraction Function: JSON Files -> Objects
- *
+ * Abstraction Function: String JSONRestauant -> Set of YelpRestaurant Objects
+ * 						 String JSONReviews -> Set of YelpReview Object
+ *						 String JSONUser -> Set of YelpUser Object
  */
 public class YelpDatabase implements MP5Db<YelpRestaurant> {
 	private Set<YelpRestaurant> restaurants;
@@ -85,7 +88,6 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 			CharStream stream = CharStreams.fromString(queryString);
 			QueryLexer lexer = new QueryLexer(stream);
 			TokenStream tokens = new CommonTokenStream(lexer);
-			System.out.println(tokens.size());
 			QueryParser parser = new QueryParser(tokens);
 			parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
 			lexer.removeErrorListener(ConsoleErrorListener.INSTANCE);

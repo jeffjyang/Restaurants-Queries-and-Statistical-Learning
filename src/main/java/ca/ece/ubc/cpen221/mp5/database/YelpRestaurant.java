@@ -8,8 +8,24 @@ import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 
+/**
+ * Represents YelpRestaurant containing JSON fields with Yelp data set
+ * 
+ * Rep Invariants: 	Is not null
+ *					Latitude, longitude will not change and are valid locations within the city
+ *					Stars is between 0 and 5 inclusive
+ *					Price is an integer between 1 and 4 inclusive
+ *					Business_id will not change
+ *					Review_count is greater or equal to 0
+ *					Schools will not change
+ *
+ * Abstraction Function: JSONobject ->  open, url, longitude, businessId, 
+ * name, state, type, stars, city, fullAddress, reviewCount, photoUrl, 
+ * latitude matches the corresponding JSON tag.
+ * Neighborhoods, categories, schools are ArrayLists of the JSONArray data
+ *
+ */
 public class YelpRestaurant implements Business{
-
     private boolean open;
     private String url;
     private double longitude;
@@ -27,10 +43,8 @@ public class YelpRestaurant implements Business{
     private List<String> schools = new ArrayList<>();
     private double latitude;
     private int price;
-
     private List<String> reviews;		// TODO change YelpReview to review ids? 
 
-    // TODO lmao no way this is right 
     public YelpRestaurant(JsonObject obj) {
 	this.open = (Boolean) obj.getBoolean("open");
 	this.url = obj.getString("url");
@@ -114,8 +128,6 @@ public class YelpRestaurant implements Business{
 	return restaurantJson.toString();
     }
 
-
-
     public void addReview(String review) {
 	reviews.add(review);
 	reviewCount ++;
@@ -173,9 +185,6 @@ public class YelpRestaurant implements Business{
 	return longitude;
     }
 
-
-
-
     // modifiers
     public void setUrl(String url) {
 	this.url = url;
@@ -208,9 +217,6 @@ public class YelpRestaurant implements Business{
     public void setPrice (int price) {
 	this.price = price;
     }
-
-
-
 
     // Getters
     public boolean isOpen() {

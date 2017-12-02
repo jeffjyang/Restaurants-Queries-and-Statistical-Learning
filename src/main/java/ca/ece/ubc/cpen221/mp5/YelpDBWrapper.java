@@ -16,7 +16,16 @@ import ca.ece.ubc.cpen221.mp5.database.YelpRestaurant;
 import ca.ece.ubc.cpen221.mp5.database.YelpReview;
 import ca.ece.ubc.cpen221.mp5.database.YelpUser;
 
-// singleton thread safe wrapper for YelpDB
+/**\
+ * A singleton thread safe wrapper for YelpDatabase
+ * 
+ * Rep Invariant: Only max one instance of YelpDBWrapper is present at any given time
+ * 		All rep invariants of YelpDatabase
+ * 
+ * Abstraction Function: String JSONRestauant -> Set of YelpRestaurant Objects
+ * String JSONReviews -> Set of YelpReview Object String JSONUser -> Set of
+ * YelpUser Object
+ */
 public class YelpDBWrapper {
     private String restaurantJSON = "data/restaurants.json";
     private String reviewJSON = "data/reviews.json";
@@ -38,6 +47,12 @@ public class YelpDBWrapper {
 	database = new YelpDatabase(restaurantJSON, reviewJSON, userJSON);
     }
 
+    
+    /**
+     * Returns the one instance of YelpDBWrapper. If the instance has not been created 
+     * yet, this will first create it then return it 
+     * @return the instance of YelpDBWrapper
+     */
     public static YelpDBWrapper getInstance() {
 	if (instance == null) {
 	    return createInstance();
@@ -46,7 +61,7 @@ public class YelpDBWrapper {
 	return instance;
     }
 
-    // TODO verify this is right 
+    
     private static synchronized YelpDBWrapper createInstance() {
 	if (instance == null) {
 	    instance = new YelpDBWrapper();
@@ -54,7 +69,12 @@ public class YelpDBWrapper {
 	return instance;
     }
 
-    // NOTE DONE 
+    /**
+     * Returns the JSON string of the restaurant represented by businessID 
+     * @param businessId
+     * 		the business_id of the restaurant we want the JSON string of
+     * @return the JSON string of the restaurant represented by businessId
+     */
     public synchronized String getRestaurant(String businessId) {
 	YelpRestaurant restaurant = database.getRestaurant(businessId);
 	if (restaurant == null) {
@@ -65,7 +85,13 @@ public class YelpDBWrapper {
 
 
 
-
+    /**
+     * Adds a user to the database 
+     * @param userInfo
+     * 		The new user information in JSON format
+     * 		Requires: userInfo contains the field "name" and the field has a string attached to it
+     * @return the JSON representation of the user that was added
+     */
     public synchronized String addUser(String userInfo) {
 
 
@@ -118,6 +144,12 @@ public class YelpDBWrapper {
 	return newUserJson.toString();
     }
 
+    /**
+     * Adds a new restaurant to the database 
+     * @param restaurantInfo
+     * 		information of the new restaurant in JSON format 
+     * @return the JSON representation of the restaurant that was added
+     */
     public synchronized String addRestaurant(String restaurantInfo) {
 
 
@@ -200,6 +232,12 @@ public class YelpDBWrapper {
 	return newRestaurantJson.toString();
     }
 
+    /**
+     * Adds a new review to the database 
+     * @param reviewInfo
+     * 		information of the new review in JSON format 
+     * @return the JSON representation of the review that was added
+     */
     public synchronized String addReview(String reviewInfo) {
 
 
@@ -281,6 +319,13 @@ public class YelpDBWrapper {
 
     }
 
+    /**
+     * Performs the given query on the database
+     * @param query
+     * 		The query we wish to perform
+     * 		Requires: query follows the grammer rules
+     * @return the results of the query
+     */
     public synchronized String getQuery(String query) {
 	Set<YelpRestaurant> restaurantMatches;
 	try {

@@ -98,6 +98,16 @@ public class YelpUser implements User {
 
 		return votesCopy;
 	}
+	
+	public Map<String, Integer> getVotesMutable() {
+		Map<String, Integer> votesCopy = new HashMap<>();
+
+		for (String category : votes.keySet()) {
+			votesCopy.put(category, votes.get(category));
+		}
+
+		return votesCopy;
+	}
 
 	public int getReviewCount() {
 		return reviewCount;
@@ -109,5 +119,9 @@ public class YelpUser implements User {
 
 	public double getAverageStars() {
 		return averageStars;
+	}
+	
+	public void setAverageStars(double aveStars) {
+	    this.averageStars = aveStars;
 	}
 }

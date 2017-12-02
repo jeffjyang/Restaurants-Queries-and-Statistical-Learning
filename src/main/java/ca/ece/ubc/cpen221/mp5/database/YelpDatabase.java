@@ -56,8 +56,8 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 	this.reviews = Collections.synchronizedSet(new HashSet<>());
 
 	parseJsonRestaurant(restaurantFileName);
-	parseJsonReviews(reviewFileName);
 	parseJsonUsers(userFileName);
+	parseJsonReviews(reviewFileName);
     }
 
     public Set<YelpRestaurant> getRestaurants() {
@@ -76,9 +76,17 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
     @Override
     public Set<YelpRestaurant> getMatches(String queryString) {
 	Set<YelpRestaurant> queryRestaurants;
-	if (!(queryString.contains("rating") | queryString.contains("in(") |
-		queryString.contains("price")| queryString.contains("category(") | 
+	if (!(queryString.contains("rating") || queryString.contains("in(") ||
+		queryString.contains("price")|| queryString.contains("category(") || 
 		queryString.contains("name"))) {
+	    
+	    if (this.containsRestaurant(queryString)) {
+		Set<YelpRestaurant> set = new HashSet<>();
+		set.add(this.getRestaurant(queryString));
+		return set;
+	    }
+	    
+	    
 	    return null;
 	}
 	queryString = replaceWhiteSpace(queryString);
@@ -161,7 +169,9 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 	List<YelpReview> userReviews = getUserReviews(userReviewsString);
 
 	List<YelpRestaurant> userRestaurants = getUserRestaurants(userReviews);
-
+	System.out.println(userObj.getName() + userObj.getReviewCount());
+	System.out.println("efwe restaurants" + userRestaurants.size());
+	
 	double meanPrice = getMeanPrice(userRestaurants);
 	double meanStar = getMeanStar(userReviews);
 
@@ -170,8 +180,12 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 
 	double Sxx = sumSquaresOfList(distFromMeanPrices);
 	double Syy = sumSquaresOfList(distFromMeanStars);
+	System.out.println("sxx syy " + Sxx + " " + Syy );
 
+
+	
 	double Sxy = sumProductsOfLists(distFromMeanPrices, distFromMeanStars);
+	System.out.println("Sxy" + Sxy);
 
 	double b = Sxy / Sxx;
 	double a = meanStar - b * meanPrice;
@@ -179,8 +193,10 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 	// double rSquared = Math.pow(Sxy, 2) / (Sxx * Syy);
 
 	// TODO lmao no way this is right
-	ToDoubleBiFunction<MP5Db<YelpRestaurant>, String> fn = (x, y) -> b
-		+ a * x.getMatches(y).iterator().next().getPrice();
+	ToDoubleBiFunction<MP5Db<YelpRestaurant>, String> fn = (x, y) -> 
+		b + a * x.getMatches(y).iterator().next().getPrice();
+		System.out.println(b);
+		System.out.println(a);
 	return fn;
     }
 
@@ -260,6 +276,7 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 	int sum = 0;
 	for (int i = 0; i < list1.size(); i++) {
 	    sum += list1.get(i) * list2.get(i);
+	    System.out.println("times tables " +list1.get(i) * list2.get(i) );
 	}
 	return sum;
     }
@@ -604,7 +621,15 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 		JsonObject obj = reader.readObject();
 
 		YelpUser user = new YelpUser(obj);
-
+//
+//		for (YelpReview review : reviews) {
+//		    if (user.getUserId().equals(review.getUserId())) {
+//			user.addReview(review.getReviewId());
+//		    }
+//		}
+//		
+		
+		
 		this.users.add(user);
 		line = br.readLine();
 	    }
@@ -640,6 +665,17 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 
 		YelpReview review = new YelpReview(obj);
 
+		String reviewUserId = review.getUserId();
+		
+		for (YelpUser user : users) {
+		    if (user.getUserId().equals(reviewUserId)) {
+			user.addReviewInit(review.getReviewId());
+			break;
+		    }
+		}
+		
+		
+		
 		this.reviews.add(review);
 		line = br.readLine();
 	    }

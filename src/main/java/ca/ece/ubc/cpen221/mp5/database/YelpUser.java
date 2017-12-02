@@ -55,13 +55,22 @@ public class YelpUser implements User {
 		reviews = new ArrayList<>();
 	}	
 	/**
-	 * Adds restaurant and increment count
+	 * Adds reviews and increment count
 	 * @param review string to be added
 	 */
 	public void addReview(String review) {
 		reviews.add(review);
 		reviewCount++;
 	}	
+	/**
+	 * Adds review 
+	 * @param review string to be added
+	 */
+	public void addReviewInit(String review) {
+	    reviews.add(review);
+	}
+	
+	
 	/**
 	 * Returns list of reviews
 	 * @return list of reviews

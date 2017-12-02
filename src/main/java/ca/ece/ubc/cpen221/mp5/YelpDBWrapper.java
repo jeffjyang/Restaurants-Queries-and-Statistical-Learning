@@ -1,9 +1,20 @@
 package ca.ece.ubc.cpen221.mp5;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.Set;
+import java.util.Map.Entry;
+
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+import javax.json.JsonReader;
+import javax.json.JsonValue;
 
 import ca.ece.ubc.cpen221.mp5.database.YelpDatabase;
 import ca.ece.ubc.cpen221.mp5.database.YelpRestaurant;
+import ca.ece.ubc.cpen221.mp5.database.YelpReview;
+import ca.ece.ubc.cpen221.mp5.database.YelpUser;
 
 // singleton thread safe wrapper for YelpDB
 public class YelpDBWrapper {
@@ -43,43 +54,213 @@ public class YelpDBWrapper {
 	return instance;
     }
 
+    // NOTE DONE 
     public synchronized String getRestaurant(String businessId) {
-	String restaurantJson = database.getRestaurantJson(businessId);
-	if ("".equals(restaurantJson)) {
+	YelpRestaurant restaurant = database.getRestaurant(businessId);
+	if (restaurant == null) {
 	    return restaurantNotExistErr;
 	}
-	return restaurantJson;
+	return restaurant.getJsonString();	
     }
 
+    
+    
+    
     public synchronized String addUser(String userInfo) {
-	String newUserJson = database.adduser(userInfo);
-	if ("".equals(newUserJson)) {
+	
+	
+	InputStream is = new ByteArrayInputStream(userInfo.getBytes());
+	JsonReader reader = Json.createReader(is);
+	JsonObject userInput;
+	try {
+	    userInput = reader.readObject();
+	} catch (Exception e) {
 	    return addUserErr;
 	}
-	return newUserJson;
+
+	if (userInput.isNull("name")) {
+	    return addUserErr;
+	}
+
+	String name = userInput.getString("name");
+	String url = "google.com/eyylmao this is totally a url";
+	String userId = "TotallyARandomStringLel";
+
+	JsonObject reviewCount = Json.createObjectBuilder()
+		.add("funny", 0)
+		.add("userful", 0)
+		.add("cool", 0)
+		.build();
+
+	JsonObject newUserJson = Json.createObjectBuilder()
+		.add("url", url)
+		.add("votes", reviewCount) // TODO verify json 
+		.add("review_count", 0)
+		.add("type", "user")
+		.add("user_id", userId)
+		.add("name", name)
+		.add("average_stars", 0)
+		.build();
+
+	YelpUser newUser = new YelpUser(newUserJson);
+
+	database.addUser(newUser);
+		
+	return newUserJson.toString();
     }
 
     public synchronized String addRestaurant(String restaurantInfo) {
-	String newRestaurant = database.addRestaurant(restaurantInfo);
-	if ("".equals(newRestaurant)) {
+	
+	
+	InputStream is = new ByteArrayInputStream(restaurantInfo.getBytes());
+	JsonReader reader = Json.createReader(is);
+	JsonObject restaurantJson;
+	try {
+		restaurantJson = reader.readObject();
+	} catch (Exception e) {
+		return addRestaurantErr;
+	}
+	// TODO check for error in fields
+
+	if (restaurantJson.isNull("open") || 
+		restaurantJson.isNull("url") ||
+		restaurantJson.isNull("longitude") ||
+		restaurantJson.isNull("neigobrhoods") ||
+		restaurantJson.isNull("name") ||
+		restaurantJson.isNull("categories") ||
+		restaurantJson.isNull("state") ||
+		restaurantJson.isNull("type") ||
+		restaurantJson.isNull("city") ||
+		restaurantJson.isNull("full_address") ||
+		restaurantJson.isNull("review_count") ||
+		restaurantJson.isNull("photo_url") ||
+		restaurantJson.isNull("schools") ||
+		restaurantJson.isNull("latitude") ||
+		restaurantJson.isNull("price")
+		) 
+	{
 	    return addRestaurantErr;
 	}
-	return newRestaurant;
+	
+	try {
+	    String type = restaurantJson.getString("type");
+	    if (!"business".equals(type.toLowerCase())) {
+		return addRestaurantErr;
+	    }
+	    
+	    int reviewCount = restaurantJson.getInt("review_count");
+	    if (reviewCount < 0) {
+		return addRestaurantErr;
+	    }
+	    
+	    int price = restaurantJson.getInt("price");
+	    if (price < 0 || price > 4) {
+		return addRestaurantErr;
+	    }
+	    
+	    
+	    
+	} catch (Exception e) {
+	    return addRestaurantErr;
+	}
+
+	
+	
+	String businessId = "VerySecureRandomString";
+
+	JsonObjectBuilder newRestaurantBuilder = Json.createObjectBuilder();
+
+	for (Entry<String, JsonValue> property : restaurantJson.entrySet()) {
+		newRestaurantBuilder.add(property.getKey(), property.getValue());
+	}
+
+	newRestaurantBuilder.add("business_id", businessId);
+	newRestaurantBuilder.add("stars", 0);
+	JsonObject newRestaurantJson = newRestaurantBuilder.build();
+
+	YelpRestaurant newRestaurant = new YelpRestaurant(newRestaurantJson);
+
+	database.addRestaurant(newRestaurant);
+	
+
+	return newRestaurantJson.toString();
     }
 
     public synchronized String addReview(String reviewInfo) {
-	String newReview = database.addRestaurant(reviewInfo);
-	if ("".equals(newReview)) {
+	
+	
+	InputStream is = new ByteArrayInputStream(reviewInfo.getBytes());
+	JsonReader reader = Json.createReader(is);
+	JsonObject reviewJson;
+	try {
+		reviewJson = reader.readObject();
+	} catch (Exception e) {
+		e.printStackTrace();
+		return addReviewInvalidErr;
+	}
+
+	if (reviewJson.isNull("type") || 
+		reviewJson.isNull("business_id") ||
+		reviewJson.isNull("text") ||
+		reviewJson.isNull("stars") ||
+		reviewJson.isNull("user_id") ||
+		reviewJson.isNull("date")
+		) 
+	{
 	    return addReviewInvalidErr;
 	}
-	if ("1".equals(newReview)) {
-	    return addReviewRestaurantErr;
+	
+	
+	try {
+	    String type = reviewJson.getString("type");
+	    if (!"review".equals(type.toLowerCase())) {
+		return addReviewInvalidErr;
+	    }	    
+	    int stars = reviewJson.getInt("stars");
+	    if (stars < 0 || stars > 5) {
+		return addReviewInvalidErr;
+	    }
+	} catch (Exception e) {
+	    return addReviewInvalidErr;
 	}
-	if ("2".equals(newReview)) {
-	    return addReviewUserErr;
-	}	
+	
+	String businessId = reviewJson.getString("business_id");
+	String userId = reviewJson.getString("user_id");
 
-	return newReview;
+	if (!database.containsRestaurant(businessId)) {
+		return addReviewRestaurantErr;
+	}
+	if (!database.containsUser(userId)) {
+		return addReviewUserErr;
+	}
+
+	JsonObject reviewVotes = Json.createObjectBuilder()
+		.add("funny", 0)
+		.add("userful", 0)
+		.add("cool", 0)
+		.build();
+	
+	
+	
+	String reviewId = "VerySecureRandomReviewStringIDxD";
+
+	JsonObjectBuilder newReviewBuilder = Json.createObjectBuilder();
+
+	for (Entry<String, JsonValue> property : reviewJson.entrySet()) {
+	    newReviewBuilder.add(property.getKey(), property.getValue());
+	}
+
+	newReviewBuilder.add("review_id", reviewId);
+	newReviewBuilder.add("votes", reviewVotes);
+	
+	JsonObject newReviewJson = newReviewBuilder.build();
+	
+	YelpReview newReview = new YelpReview(newReviewJson);
+
+	database.addReview(newReview);
+
+	return newReviewJson.toString();
+
 
     }
 

@@ -324,9 +324,22 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 	}
 	
 
-	
+	// requres review to be prevalidated
 	public void addReview(YelpReview review) {
+	    String businessId = review.getBusinessId();
+	    YelpRestaurant toModifyRestaurant = null;
+	    for (YelpRestaurant restaurant : restaurants) {
+		if (businessId.equals(restaurant.getBusinessId())) {
+		    toModifyRestaurant = restaurant;
+		    break;
+		}
+	    }
+	    double newStars = (toModifyRestaurant.getStars() * toModifyRestaurant.getReviewCount() + review.getStars()) 
+		    / (toModifyRestaurant.getReviewCount() + 1);
+	    toModifyRestaurant.addReview(review.getReviewId());
+	    toModifyRestaurant.setStars(newStars);
 	    reviews.add(review);
+	    
 	}
 
 	

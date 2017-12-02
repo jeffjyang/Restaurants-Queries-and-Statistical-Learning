@@ -129,6 +129,8 @@ public class YelpRestaurant implements Business{
 	return restaurantJson.toString();
     }
 
+    
+    // NOTE DOES NOT UPDATE RATING 
     public void addReview(String review) {
 	reviews.add(review);
 	reviewCount ++;
@@ -199,7 +201,7 @@ public class YelpRestaurant implements Business{
 	return categories.remove(category);
     }
 
-    public void setStars(int stars) {
+    public void setStars(double stars) {
 	this.stars = stars;
     }
 

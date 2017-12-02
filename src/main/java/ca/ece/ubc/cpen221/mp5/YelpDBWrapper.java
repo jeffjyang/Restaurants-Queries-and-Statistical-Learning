@@ -253,7 +253,7 @@ public class YelpDBWrapper {
 
 	JsonObject reviewVotes = Json.createObjectBuilder()
 		.add("funny", 0)
-		.add("userful", 0)
+		.add("useful", 0)
 		.add("cool", 0)
 		.build();
 

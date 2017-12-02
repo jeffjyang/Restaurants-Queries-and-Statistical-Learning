@@ -137,10 +137,8 @@ public class YelpRestaurant implements Business{
     }
 
     public List<String> getReviews() {
-	List<String> reviewsCopy = new ArrayList<>();
-	for (String review : reviews) {
-	    reviewsCopy.add(review);
-	}
+	List<String> reviewsCopy = new ArrayList<>(reviews);
+
 	return reviewsCopy;
     }
 

@@ -23,6 +23,8 @@ public class ReviewTests {
 		String text = "The pizza is terrible, but if you need a place to watch a "
 				+ "game or just down some pitchers, this place works.\n\nOh, and the"
 				+ " pasta is even worse than the pizza.";
+		database.getReview("not");
+		database.getUser("not");
 		
 		assertEquals("0a-pCW4guXIlWNpVeBHChg", review.getReviewId());
 		assertEquals("2006-07-26", review.getDate());

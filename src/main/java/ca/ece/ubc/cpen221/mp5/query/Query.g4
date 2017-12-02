@@ -16,7 +16,6 @@ RATING : 'rating';
 PRICE : 'price';
 STRING   : ('a'..'z' | 'A'..'Z' | '_' | '\u0027' | '-') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9' |'\u0027' | '-')*;
 WHITESPACE : [ \t\r\n]+ -> skip;
-UNDERSCORE : '_' -> skip
 INEQ : ('>' | '>=' | '<' | '<=' | '=');
 
 root : orexpr | andexpr | atom EOF;

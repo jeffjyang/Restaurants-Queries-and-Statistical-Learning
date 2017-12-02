@@ -8,13 +8,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
-import java.util.Map.Entry;
 import java.util.function.ToDoubleBiFunction;
 
 import javax.json.*;
 
-import org.antlr.v4.runtime.ANTLRErrorListener;
-import org.antlr.v4.runtime.BailErrorStrategy;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -267,7 +264,7 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 		return sum;
 	}
 
-	private YelpUser getUser(String userID) {
+	public YelpUser getUser(String userID) {
 		for (YelpUser user : users) {
 			if (userID.equals(user.getUserId())) {
 				return user;
@@ -277,7 +274,7 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 	}
 
 	// Returns the review object from the review ID
-	private YelpReview getReview(String reviewID) {
+	public YelpReview getReview(String reviewID) {
 		for (YelpReview review : reviews) {
 			if (reviewID.equals(review.getReviewId())) {
 				return review;

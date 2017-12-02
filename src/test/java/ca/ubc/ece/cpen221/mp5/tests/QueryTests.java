@@ -16,7 +16,6 @@ import org.junit.Test;
 
 import ca.ece.ubc.cpen221.mp5.database.YelpDatabase;
 import ca.ece.ubc.cpen221.mp5.query.Query;
-import ca.ece.ubc.cpen221.mp5.query.QueryDatabaseListener;
 import ca.ece.ubc.cpen221.mp5.query.QueryLexer;
 import ca.ece.ubc.cpen221.mp5.query.QueryListener;
 import ca.ece.ubc.cpen221.mp5.query.QueryListenerFilterCreator;
@@ -30,11 +29,11 @@ public class QueryTests {
 
 	@Test
 	public void Test00() {
-//		YelpDatabase database = new YelpDatabase(restaurantJSON, reviewJSON, userJSON);
-//		String query = "category(Chinese)";
-//		Query queryObj = new Query();
-//
-//		queryObj.queryDatabase(database, query);
+		YelpDatabase database = new YelpDatabase(restaurantJSON, reviewJSON, userJSON);
+		String query = "category(Chinese)";
+		Query queryObj = new Query();
+
+		queryObj.queryDatabase(database, query);
 
 	}
 
@@ -43,47 +42,66 @@ public class QueryTests {
 	/**
 	 * @param args
 	 */
-//	public static void main(String[] args) {
-//		String query = "rating = 3.5";
-//		YelpDatabase database = new YelpDatabase(restaurantJSON, reviewJSON, userJSON);
-//		
-//		query = replaceWhiteSpace(query);
-//		CharStream stream = CharStreams.fromString(query);
-//		QueryLexer lexer = new QueryLexer(stream);
-//		TokenStream tokens = new CommonTokenStream(lexer);
-//		QueryParser parser = new QueryParser(tokens);
-//		ParseTree tree = parser.root();
-//		ParseTreeWalker walker = new ParseTreeWalker();
-//		//QueryListener listener = new QueryListenerPrintEverything();
-//		QueryListener listener = new QueryListenerFilterCreator(database.getRestaurants());
-//		walker.walk(listener, tree);
-//		System.out.println(tree.toStringTree(parser));
-//
-//		// show AST in GUI
-//		JFrame frame = new JFrame("Antlr AST");
-//		JPanel panel = new JPanel();
-//		TreeViewer viewr = new TreeViewer(Arrays.asList(parser.getRuleNames()), tree);
-//		viewr.setScale(1.5);// scale a little
-//		panel.add(viewr);
-//		frame.add(panel);
-//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//		frame.setSize(200, 200);
-//		frame.setVisible(true);
-//	}
-//	
-//	private static String replaceWhiteSpace(String query) {
-//		boolean openBracket = false;
-//		char[] queryArray = query.toCharArray();
-//		
-//		for (int index = 0; index < queryArray.length; index++) {
-//			if (queryArray[index] == '(') openBracket = true;
-//			else if (queryArray[index] == ')') openBracket = false;
-//			else if (openBracket && queryArray[index] == ' ') {
-//				queryArray[index] = '_';
-//			}
-//		}
-//		
-//		return String.valueOf(queryArray);
-//	}
+	public static void main(String[] args) {
+		String query = "price = 3 || (rating = 2 || price = 3)";
+		YelpDatabase database = new YelpDatabase(restaurantJSON, reviewJSON, userJSON);
+		System.out.println(query);
+		query = replaceWhiteSpace(query);
+		System.out.println(query);
+		CharStream stream = CharStreams.fromString(query);
+		QueryLexer lexer = new QueryLexer(stream);
+		TokenStream tokens = new CommonTokenStream(lexer);
+		QueryParser parser = new QueryParser(tokens);
+		ParseTree tree = parser.root();
+		ParseTreeWalker walker = new ParseTreeWalker();
+		//QueryListener listener = new QueryListenerPrintEverything();
+		QueryListener listener = new QueryListenerFilterCreator(database.getRestaurants());
+		walker.walk(listener, tree);
+		System.out.println(tree.toStringTree(parser));
+
+		// show AST in GUI
+		JFrame frame = new JFrame("Antlr AST");
+		JPanel panel = new JPanel();
+		TreeViewer viewr = new TreeViewer(Arrays.asList(parser.getRuleNames()), tree);
+		viewr.setScale(1.5);// scale a little
+		panel.add(viewr);
+		frame.add(panel);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setSize(200, 200);
+		frame.setVisible(true);
+	}
+	
+	private static String replaceWhiteSpace(String query) {
+		boolean openBracket = false;
+		boolean adjacentAlphabet = false;
+		char[] queryArray = query.toCharArray();
+
+		for (int index = 0; index < queryArray.length; index++) {
+			adjacentAlphabet = adjacentAreAlpha(queryArray, index);
+			
+			if (queryArray[index] == '(')
+				openBracket = true;
+			else if (queryArray[index] == ')')
+				openBracket = false;
+			else if (openBracket && queryArray[index] == ' ' && adjacentAlphabet) {
+				queryArray[index] = '_';
+			}
+			adjacentAlphabet = false;
+		}
+		return String.valueOf(queryArray);
+	}
+	
+	private static boolean adjacentAreAlpha(char[] queryArray, int index) {
+		if (index >= 1 && index < queryArray.length-1) {
+			int leftChar = queryArray[index-1];
+			int rightChar = queryArray[index+1];
+			
+			if (leftChar >= 65 && leftChar <= 122 && 
+					rightChar >= 65 && leftChar <= 122) {
+				return true;
+			}
+		}
+		return false;	
+	}
 
 }

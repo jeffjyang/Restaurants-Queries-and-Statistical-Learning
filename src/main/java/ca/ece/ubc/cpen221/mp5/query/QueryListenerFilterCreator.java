@@ -159,7 +159,7 @@ public class QueryListenerFilterCreator extends QueryBaseListener {
 	public void exitRating(RatingContext ctx) {
 		String operation = ctx.INEQ().toString();
 		double rating = Double.parseDouble(ctx.NUM().toString());
-		Set<YelpRestaurant> ratingRestaurants;
+		Set<YelpRestaurant> ratingRestaurants = null;
 
 		switch (operation) { //Performs operation based on the operation required
 		case "<=": 
@@ -182,8 +182,6 @@ public class QueryListenerFilterCreator extends QueryBaseListener {
 			ratingRestaurants = restaurantsList.stream().filter(restaurant -> restaurant.getStars() == rating)
 					.collect(Collectors.toSet());
 			break;
-		default:
-			ratingRestaurants = null; //Returning null if not found
 		}
 		restaurantStack.push(ratingRestaurants);
 	}
@@ -199,7 +197,7 @@ public class QueryListenerFilterCreator extends QueryBaseListener {
 	public void exitPrice(PriceContext ctx) {
 		String operation = ctx.INEQ().toString();
 		int price = Integer.parseInt(ctx.NUM().toString());
-		Set<YelpRestaurant> priceRestaurants;
+		Set<YelpRestaurant> priceRestaurants = null;
 
 		switch (operation) { //Filtering price restaurant by operation required
 		case "<=":
@@ -222,8 +220,6 @@ public class QueryListenerFilterCreator extends QueryBaseListener {
 			priceRestaurants = restaurantsList.stream().filter(restaurant -> restaurant.getPrice() == price)
 					.collect(Collectors.toSet());
 			break;
-		default:
-			priceRestaurants = null; //Returning null if not found
 		}
 		restaurantStack.push(priceRestaurants);
 	}

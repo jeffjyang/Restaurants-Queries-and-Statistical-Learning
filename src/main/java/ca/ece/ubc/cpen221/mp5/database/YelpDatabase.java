@@ -624,17 +624,34 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 	 */
 	private static String replaceWhiteSpace(String query) {
 		boolean openBracket = false;
+		boolean adjacentAlphabet = false;
 		char[] queryArray = query.toCharArray();
 
 		for (int index = 0; index < queryArray.length; index++) {
+			adjacentAlphabet = adjacentAreAlpha(queryArray, index);
+			
 			if (queryArray[index] == '(')
 				openBracket = true;
 			else if (queryArray[index] == ')')
 				openBracket = false;
-			else if (openBracket && queryArray[index] == ' ') {
+			else if (openBracket && queryArray[index] == ' ' && adjacentAlphabet) {
 				queryArray[index] = '_';
 			}
+			adjacentAlphabet = false;
 		}
 		return String.valueOf(queryArray);
+	}
+	
+	private static boolean adjacentAreAlpha(char[] queryArray, int index) {
+		if (index >= 1 && index < queryArray.length-1) {
+			int leftChar = queryArray[index-1];
+			int rightChar = queryArray[index+1];
+			
+			if (leftChar >= 65 && leftChar <= 122 && 
+					rightChar >= 65 && leftChar <= 122) {
+				return true;
+			}
+		}
+		return false;	
 	}
 }

@@ -6,6 +6,10 @@ import java.util.Set;
 
 import ca.ece.ubc.cpen221.mp5.database.YelpDatabase;
 import ca.ece.ubc.cpen221.mp5.database.YelpRestaurant;
+import ca.ece.ubc.cpen221.mp5.query.QueryListenerFilterCreator;
+import ca.ece.ubc.cpen221.mp5.query.QueryParser.RootContext;
+
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.junit.Test;
 
 public class DatabaseTests {
@@ -14,13 +18,6 @@ public class DatabaseTests {
 	private String userJSON = "data/users.json";
 
 	Set<YelpRestaurant> restaurants;
-
-	@Test
-	public void test00() {
-		YelpDatabase database = new YelpDatabase(restaurantJSON, reviewJSON, userJSON);
-		Set<YelpRestaurant> restaurants = database.getRestaurants();
-
-	}
 
 	@Test
 	public void testQuery() {
@@ -157,7 +154,7 @@ public class DatabaseTests {
 
 	@Test
 	public void testQueryRateEQIneq() {
-		String queryString = "price = 2 || rating = 2";
+		String queryString = "(price = 3 && price <= 3) || (price = 2 || rating = 2)";
 		YelpDatabase database = new YelpDatabase(restaurantJSON, reviewJSON, userJSON);
 		Set<YelpRestaurant> restaurants = database.getMatches(queryString);
 
@@ -166,7 +163,7 @@ public class DatabaseTests {
 
 	@Test
 	public void testQueryRateExtraIneq() {
-		String queryString = "rating <= 2 || rating = 3 ";
+		String queryString = "in(UC Campus Area) && (rating <= 2 || rating = 3)";
 		YelpDatabase database = new YelpDatabase(restaurantJSON, reviewJSON, userJSON);
 		Set<YelpRestaurant> restaurants = database.getMatches(queryString);
 		assertTrue(restaurants != null);
@@ -210,5 +207,17 @@ public class DatabaseTests {
 		Set<YelpRestaurant> restaurants = database.getMatches(queryString);
 
 		assertTrue(restaurants == null);
+	}
+	
+	@Test
+	public void exitLoopNull() {
+		ParserRuleContext ctxParser = new ParserRuleContext();
+		RootContext ctx = new RootContext(ctxParser, 0);
+		YelpDatabase database = new YelpDatabase(restaurantJSON, reviewJSON, userJSON);
+		QueryListenerFilterCreator fc = new QueryListenerFilterCreator(database.getRestaurants());
+		
+		fc.exitRoot(ctx);
+		Set<YelpRestaurant> filteredRestaurants = fc.getQueryRestaurants();
+		assertTrue(filteredRestaurants == null);
 	}
 }

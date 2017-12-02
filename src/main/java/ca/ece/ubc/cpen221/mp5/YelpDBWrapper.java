@@ -86,8 +86,12 @@ public class YelpDBWrapper {
 	    return addUserErr;
 
 	}
-
-	String name = userInput.getString("name");
+	String name;
+	try {
+	    name = userInput.getString("name");
+	} catch (Exception e) {
+	    return addUserErr;
+	}
 	String url = "google.com/eyylmao this is totally a url";
 	String userId = "TotallyARandomStringLel";
 

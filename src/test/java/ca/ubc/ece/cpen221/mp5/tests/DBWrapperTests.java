@@ -8,8 +8,10 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import javax.json.Json;
+import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
+import javax.json.JsonValue;
 
 import org.junit.Test;
 
@@ -38,7 +40,9 @@ public class DBWrapperTests {
     @Test
     public void test01() {
 	YelpDBWrapper database = YelpDBWrapper.getInstance();
+	String restaurantError = database.getRestaurant("not a busines id");
 
+	assertEquals(restaurantNotExistErr, restaurantError);
 	String validRestaurant = database.getRestaurant("BJKIoQa5N2T_oDlLVf467Q");
 
 	assertEquals("{\"open\": true, \"url\": \"http://www.yelp.com/biz/jasmine-thai-berkeley\", "
@@ -50,9 +54,7 @@ public class DBWrapperTests {
 		+ "[\"University of California at Berkeley\"], \"latitude\": 37.8759615, \"price\": 2}",
 		validRestaurant);
 
-	String restaurantError = database.getRestaurant("not a busines id");
 
-	assertEquals(restaurantNotExistErr, restaurantError);
     }
 
     // addUser
@@ -78,12 +80,22 @@ public class DBWrapperTests {
 	    fail();
 	}
 
-	JsonObject inValidUserJson = Json.createObjectBuilder().add("badField", "theres no name!")
+	JsonObject invalidUserJson = Json.createObjectBuilder().add("badField", "theres no name!")
 		.add("url", "this should be ignored").build();
 
-	assertEquals(addUserErr, database.addUser(inValidUserJson.toString()));
+	assertEquals(addUserErr, database.addUser(invalidUserJson.toString()));
 
 	assertEquals(addUserErr, database.addUser("invalid JSON string"));
+
+	JsonObject invalidUserJson2 = Json.createObjectBuilder().add("name", JsonValue.NULL)
+		.add("badField", "this should be ignored").add("url", "this should be ignored").build();
+	
+	assertEquals(addUserErr, database.addUser(invalidUserJson2.toString()));
+
+	JsonObject invalidUserJson3 = Json.createObjectBuilder().add("name", 2)
+		.add("badField", "this should be ignored").add("url", "this should be ignored").build();
+   
+	assertEquals(addUserErr, database.addUser(invalidUserJson3.toString()));
 
     }
 
@@ -92,11 +104,15 @@ public class DBWrapperTests {
     public void test03() {
 	YelpDBWrapper database = YelpDBWrapper.getInstance();
 
-	JsonObject validRestaurantJson = Json.createObjectBuilder().add("open", "true")
-		.add("url", "www. this is a url!! .com").add("longitude", 404).add("neighborhoods", "not null")
-		.add("name", "a name!").add("categories", "not null").add("state", "a state").add("type", "business")
-		.add("city", "a city").add("full_addresss", "123 sesame street").add("review_count", 2)
-		.add("photo_url", "url").add("schools", "not null").add("latitude", 404).add("price", 3).build();
+	JsonArray jsonArray = Json.createArrayBuilder()
+		.add("Mr Rogers")
+		.build();
+	
+	JsonObject validRestaurantJson = Json.createObjectBuilder().add("open", true)
+		.add("url", "www. this is a url!! .com").add("longitude", 404).add("neighborhoods", jsonArray)
+		.add("name", "a name!").add("categories", jsonArray).add("state", "a state").add("type", "business")
+		.add("city", "a city").add("full_address", "123 sesame street").add("review_count", 2)
+		.add("photo_url", "url").add("schools", jsonArray).add("latitude", 404).add("price", 3).build();
 
 	InputStream is = new ByteArrayInputStream(database.addRestaurant(validRestaurantJson.toString()).getBytes());
 	JsonReader reader = Json.createReader(is);
@@ -123,39 +139,205 @@ public class DBWrapperTests {
 	    fail();
 	}
 
-	JsonObject inValidRestaurantJson = Json.createObjectBuilder().add("open", "true")
-		.add("url", "www. this is a url!! .com").add("longitude", 404).add("neighborhoods", "not null")
-		.add("name", "a name!").add("categories", "not null").add("type", "not a business O.O")
-		.add("state", "a state").add("city", "a city").add("full_addresss", "123 sesame street")
-		.add("review_count", 2).add("photo_url", "url").add("schools", "not null").add("latitude", 404)
-		.add("price", 3).build();
+	JsonObject invalidRestaurantJson = Json.createObjectBuilder().add("open", true)
+		.add("url", "www. this is a url!! .com").add("longitude", 404).add("neighborhoods", jsonArray)
+		.add("name", "a name!").add("categories", jsonArray).add("state", "a state").add("type", "not a business")
+		.add("city", "a city").add("full_address", "123 sesame street").add("review_count", 2)
+		.add("photo_url", "url").add("schools", jsonArray).add("latitude", 404).add("price", 3).build();
 
-	assertEquals(addRestaurantErr, database.addRestaurant(inValidRestaurantJson.toString()));
+	assertEquals(addRestaurantErr, database.addRestaurant(invalidRestaurantJson.toString()));
 
-	JsonObject inValidRestaurantJson2 = Json.createObjectBuilder().add("open", "true")
-		.add("url", "www. this is a url!! .com").add("longitude", 404).add("neighborhoods", "not null")
-		.add("name", "a name!").add("categories", "not null").add("type", "business").add("state", "a state")
-		.add("city", "a city").add("full_addresss", "123 sesame street").add("review_count", 2)
-		.add("photo_url", "url").add("schools", "not null").add("latitude", 404).add("price", 3).build();
+	JsonObject invalidRestaurantJson2 = Json.createObjectBuilder().add("open", true)
+		.add("url", "www. this is a url!! .com").add("longitude", 404).add("neighborhoods", jsonArray)
+		.add("name", "a name!").add("categories", jsonArray).add("state", "a state").add("type", "business")
+		.add("city", "a city").add("full_address", "123 sesame street").add("review_count", 2)
+		.add("photo_url", "url").add("schools", JsonValue.NULL).add("latitude", 404).add("price", 3).build();
+	
 
-	assertEquals(addRestaurantErr, database.addRestaurant(inValidRestaurantJson2.toString()));
+	assertEquals(addRestaurantErr, database.addRestaurant(invalidRestaurantJson2.toString()));
 
-	JsonObject inValidRestaurantJson3 = Json.createObjectBuilder().add("open", "true")
-		.add("url", "www. this is a url!! .com").add("longitude", 404).add("neighborhoods", "not null")
-		.add("name", "a name!").add("categories", "not null").add("state", "a state").add("type", "business")
-		.add("city", "a city").add("full_addresss", "123 sesame street").add("review_count", 2)
-		.add("photo_url", "url").add("schools", "not null").add("latitude", 404).add("price", 6).build();
+	JsonObject invalidRestaurantJson3 = Json.createObjectBuilder().add("open", true)
+		.add("url", "www. this is a url!! .com").add("longitude", 404).add("neighborhoods", jsonArray)
+		.add("name", "a name!").add("categories", jsonArray).add("state", "a state").add("type", "business")
+		.add("city", "a city").add("full_address", "123 sesame street").add("review_count", 2)
+		.add("photo_url", "url").add("schools", jsonArray).add("latitude", 404).add("price", 6).build();
+	
+	assertEquals(addRestaurantErr, database.addRestaurant(invalidRestaurantJson3.toString()));
 
-	assertEquals(addRestaurantErr, database.addRestaurant(inValidRestaurantJson3.toString()));
+	JsonObject invalidRestaurantJson4 = Json.createObjectBuilder().add("open", true)
+		.add("url", "www. this is a url!! .com").add("longitude", 404).add("neighborhoods", jsonArray)
+		.add("name", "a name!").add("categories", jsonArray).add("state", "a state").add("type", "business")
+		.add("city", "a city").add("full_address", "123 sesame street").add("review_count", -2)
+		.add("photo_url", "url").add("schools", jsonArray).add("latitude", 404).add("price", 3).build();
 
-	JsonObject inValidRestaurantJson4 = Json.createObjectBuilder().add("open", "true")
-		.add("url", "www. this is a url!! .com").add("longitude", 404).add("neighborhoods", "not null")
-		.add("name", "a name!").add("categories", "not null").add("state", "a state").add("type", "business")
-		.add("city", "a city").add("full_addresss", "123 sesame street").add("review_count", -2)
-		.add("photo_url", "url").add("schools", "not null").add("latitude", 404).add("price", 3).build();
+	assertEquals(addRestaurantErr, database.addRestaurant(invalidRestaurantJson4.toString()));
+	
+	assertEquals(addRestaurantErr, database.addRestaurant("totally json"));
+	
+	JsonObject invalidRestaurantJson5 = Json.createObjectBuilder().add("open", true)
+		.add("url", JsonValue.NULL).add("longitude", 404).add("neighborhoods", jsonArray)
+		.add("name", "a name!").add("categories", jsonArray).add("state", "a state").add("type", "business")
+		.add("city", "a city").add("full_address", "123 sesame street").add("review_count", "AN INTEGER NOT!")
+		.add("photo_url", "url").add("schools", jsonArray).add("latitude", 404).add("price", 3).build();
 
-	assertEquals(addRestaurantErr, database.addRestaurant(inValidRestaurantJson4.toString()));
+	assertEquals(addRestaurantErr, database.addRestaurant(invalidRestaurantJson5.toString()));
 
+	
+	JsonObject invalidRestaurantJson6 = Json.createObjectBuilder().add("open", true)
+		.add("url", "www. this is a url!! .com").add("longitude", 404).add("neighborhoods", jsonArray)
+		.add("name", "a name!").add("categories", jsonArray).add("state", "a state").add("type", "business")
+		.add("city", "a city").add("full_address", "123 sesame street").add("review_count", 2)
+		.add("photo_url", "url").add("schools", jsonArray).add("latitude", 404).add("price", "THIS SHOULD FAIL").build();
+   
+	assertEquals(addRestaurantErr, database.addRestaurant(invalidRestaurantJson6.toString()));
+
+	JsonObject invalidRestaurantJson7 = Json.createObjectBuilder().add("open", true)
+		.add("url", "www. this is a url!! .com").add("longitude", 404).add("neighborhoods", jsonArray)
+		.add("name", "a name!").add("categories", jsonArray).add("state", "a state").add("type", "business")
+		.add("city", "a city").add("full_address", "123 sesame street").add("review_count", 2)
+		.add("photo_url", "url").add("schools", jsonArray).add("latitude", 404).build();
+	
+	assertEquals(addRestaurantErr, database.addRestaurant(invalidRestaurantJson7.toString()));
+
+    }
+    
+    // test addReview
+    @Test
+    public void test04() {
+	YelpDBWrapper database = YelpDBWrapper.getInstance();
+
+	JsonObject validReviewJson = Json.createObjectBuilder()
+		.add("type", "review")
+		.add("business_id",  "1CBs84C-a-cuA3vncXVSAw")
+		.add("text", "text")
+		.add("stars", 2)
+		.add("user_id", "90wm_01FAIqhcgV_mPON9Q")
+		.add("date", "2006-07-26")
+		.build();
+	
+	InputStream is = new ByteArrayInputStream(database.addReview(validReviewJson.toString()).getBytes());
+	JsonReader reader = Json.createReader(is);
+	JsonObject createdReview = null;
+	try {
+	    createdReview = reader.readObject();
+	} catch (Exception e) {
+	    fail();
+	}
+	try {
+	    if (createdReview.isNull("type") || 
+		    createdReview.isNull("business_id") ||
+		    createdReview.isNull("text") ||
+		    createdReview.isNull("stars") ||
+		    createdReview.isNull("user_id") ||
+		    createdReview.isNull("date") ||
+		    createdReview.isNull("votes") ||
+		    createdReview.isNull("review_id")
+		    ) 
+	    {
+		fail();
+	    }
+	} catch (Exception e) {
+	    fail();
+
+	}
+	
+
+	JsonObject invalidReviewNoBusiness = Json.createObjectBuilder()
+		.add("type", "review")
+		.add("business_id",  "not a business")
+		.add("text", "text")
+		.add("stars", 2)
+		.add("user_id", "90wm_01FAIqhcgV_mPON9Q")
+		.add("date", "2006-07-26")
+		.build();
+	
+	assertEquals(addReviewRestaurantErr, database.addReview(invalidReviewNoBusiness.toString()));
+	
+	JsonObject invalidReview = Json.createObjectBuilder()
+		.add("type", "not a review")
+		.add("business_id",  "1CBs84C-a-cuA3vncXVSAw")
+		.add("text", "text")
+		.add("stars", 2)
+		.add("user_id", "90wm_01FAIqhcgV_mPON9Q")
+		.add("date", "2006-07-26")
+		.build();
+	
+	assertEquals(addReviewInvalidErr, database.addReview(invalidReview.toString()));
+	
+	JsonObject invalidReview2 = Json.createObjectBuilder()
+		.add("type", "review")
+		.add("business_id",  "1CBs84C-a-cuA3vncXVSAw")
+		.add("text", "text")
+		.add("stars", -2)
+		.add("user_id", "90wm_01FAIqhcgV_mPON9Q")
+		.add("date", "2006-07-26")
+		.build();
+	
+	assertEquals(addReviewInvalidErr, database.addReview(invalidReview2.toString()));
+	
+	
+	JsonObject invalidReview3 = Json.createObjectBuilder()
+		.add("type", 404)
+		.add("business_id",  "1CBs84C-a-cuA3vncXVSAw")
+		.add("text", "text")
+		.add("stars", -2)
+		.add("user_id", "90wm_01FAIqhcgV_mPON9Q")
+		.add("date", "2006-07-26")
+		.build();
+	
+	assertEquals(addReviewInvalidErr, database.addReview(invalidReview3.toString()));
+	
+	JsonObject invalidReview4 = Json.createObjectBuilder()
+		.add("type", "review")
+		.add("business_id",  "1CBs84C-a-cuA3vncXVSAw")
+		.add("text", "text")
+		.add("stars", 2)
+		.add("user_id", "no user")
+		.add("date", "2006-07-26")
+		.build();
+	
+	assertEquals(addReviewUserErr, database.addReview(invalidReview4.toString()));
+	
+	
+	JsonObject invalidReview5 = Json.createObjectBuilder()
+		.add("type", "review")
+		.add("business_id",  "1CBs84C-a-cuA3vncXVSAw")
+		.add("text", "text")
+		.add("stars", 2)
+		.add("user_id", "90wm_01FAIqhcgV_mPON9Q")
+		.build();
+	
+	assertEquals(addReviewInvalidErr, database.addReview(invalidReview5.toString()));
+	
+	
+	JsonObject invalidReview6 = Json.createObjectBuilder()
+		.add("type", JsonValue.NULL)
+		.add("business_id",  "1CBs84C-a-cuA3vncXVSAw")
+		.add("text", "text")
+		.add("stars", 2)
+		.add("user_id", "90wm_01FAIqhcgV_mPON9Q")
+		.build();
+	
+	assertEquals(addReviewInvalidErr, database.addReview(invalidReview6.toString()));
+
+	assertEquals(addReviewInvalidErr, database.addReview("totally JSON"));
+
+    }
+    
+    // getQuery
+    @Test
+    public void test05() {
+	YelpDBWrapper database = YelpDBWrapper.getInstance();
+	
+	String query = "in(Telegraph Ave) && (category(Chinese) || category(Italian)) && price <= 2";
+	assertTrue(database.getQuery(query).length() > 0);
+	
+	String invalidQuery = "not a valid query";
+	assertEquals(getQueryInvalidErr, database.getQuery(invalidQuery));
+	
+	String noResultQuery = "in(Telegraph Ave) && (category(Chinese) && category(Italian)) && price >= 3";
+	assertEquals(getQueryMatchErr, database.getQuery(noResultQuery));
+	
     }
 
 }

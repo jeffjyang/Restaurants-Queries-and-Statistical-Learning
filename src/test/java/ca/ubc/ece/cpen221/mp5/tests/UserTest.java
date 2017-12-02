@@ -34,7 +34,9 @@ public class UserTest {
 		user.setName("NotChris");
 		assertEquals("NotChris", user.getName());
 		Map<String, Integer> votes = user.getVotes();
-		
+		assertTrue(votes.get("funny") == 35);
+		assertTrue(votes.get("useful") == 21);
+		assertTrue(votes.get("cool") == 14);	
 	}
 
 }

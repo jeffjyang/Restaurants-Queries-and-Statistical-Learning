@@ -24,7 +24,6 @@ public class YelpUser implements User {
 	private String userId;
 	private String name;
 	private double averageStars; // TODO update averageStars
-
 	private List<String> reviews; // TODO move reviews to a generic in User interface??????????????
 
 	public YelpUser(JsonObject obj) {
@@ -34,8 +33,14 @@ public class YelpUser implements User {
 		this.userId = obj.getString("user_id");
 		this.name = obj.getString("name");
 		this.averageStars = obj.getInt("average_stars");
+		
+		JsonObject voteJson = obj.getJsonObject("votes");
+		Map<String, Integer> voteMap = new HashMap<>();
+		voteMap.put("funny", voteJson.getInt("funny"));
+		voteMap.put("useful", voteJson.getInt("useful"));
+		voteMap.put("cool", voteJson.getInt("cool"));
 
-		this.votes = new HashMap<>();
+		this.votes = voteMap;
 		for (String category : votes.keySet()) {
 			this.votes.put(category, votes.get(category));
 		}

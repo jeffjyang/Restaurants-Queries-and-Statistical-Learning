@@ -34,8 +34,14 @@ public class YelpReview implements Review {
 		this.stars = obj.getInt("stars");
 		this.date = obj.getString("date");
 		this.userId = obj.getString("user_id");
+		
+		JsonObject voteJson = obj.getJsonObject("votes");
+		Map<String, Integer> voteMap = new HashMap<>();
+		voteMap.put("funny", voteJson.getInt("funny"));
+		voteMap.put("useful", voteJson.getInt("useful"));
+		voteMap.put("cool", voteJson.getInt("cool"));
 
-		this.votes = new HashMap<>();
+		this.votes = voteMap;
 		for (String category : votes.keySet()) {
 			this.votes.put(category, votes.get(category));
 		}

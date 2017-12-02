@@ -163,10 +163,15 @@ public class DatabaseTests {
 
 	@Test
 	public void testQueryRateExtraIneq() {
-		String queryString = "in(UC Campus Area) && (rating <= 2 || rating = 3)";
+		String queryString = "in(UC Campus Area) && (price <= 2 || rating = 3)";
 		YelpDatabase database = new YelpDatabase(restaurantJSON, reviewJSON, userJSON);
 		Set<YelpRestaurant> restaurants = database.getMatches(queryString);
-		assertTrue(restaurants != null);
+		
+		
+		YelpRestaurant bearRamen = database.getRestaurant("9N684D-RFrQC0V4K0XvdxQ");
+		YelpRestaurant Babette = database.getRestaurant("6QZR4ToHKlse0yhqpU5ijg");
+		assertTrue(restaurants.contains(bearRamen));
+		assertFalse(restaurants.contains(Babette));
 	}
 
 	@Test
@@ -198,6 +203,20 @@ public class DatabaseTests {
 		assertFalse(restaurants.contains(takoSushi));
 		assertFalse(restaurants.contains(Camille));
 		assertFalse(restaurants.contains(cafeMilano));
+	}
+	
+	@Test
+	public void testQueryBracket() {
+		String queryString = "(name(Mandarin House) && price <= 4) || (category(Chinese) || "
+				+ "in(Telegraph Ave))";
+		YelpDatabase database = new YelpDatabase(restaurantJSON, reviewJSON, userJSON);
+		Set<YelpRestaurant> restaurants = database.getMatches(queryString);
+
+		YelpRestaurant mandarinHouse = database.getRestaurant("5fneYCWLhgBZQUcNPOch-w");
+		YelpRestaurant Camille = database.getRestaurant("z4YO4rycvYrZEd3VYtzVvw");
+
+		assertTrue(restaurants.contains(mandarinHouse));
+		assertFalse(restaurants.contains(Camille));
 	}
 
 	@Test

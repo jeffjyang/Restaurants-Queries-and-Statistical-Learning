@@ -43,7 +43,7 @@ public class QueryTests {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		String query = "price = 3 || (rating = 2 || price = 3)";
+		String query = "price = 6";
 		YelpDatabase database = new YelpDatabase(restaurantJSON, reviewJSON, userJSON);
 		System.out.println(query);
 		query = replaceWhiteSpace(query);

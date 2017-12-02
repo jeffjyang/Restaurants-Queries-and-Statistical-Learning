@@ -642,6 +642,13 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 		return String.valueOf(queryArray);
 	}
 	
+	/**
+	 * Checks if the character on left and right are alphabets
+	 * 
+	 * @param queryArray character array to be tested
+	 * @param index character index
+	 * @return true if they are both alphabets false otherwise
+	 */
 	private static boolean adjacentAreAlpha(char[] queryArray, int index) {
 		if (index >= 1 && index < queryArray.length-1) {
 			int leftChar = queryArray[index-1];

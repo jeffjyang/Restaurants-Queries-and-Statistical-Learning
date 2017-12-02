@@ -35,7 +35,9 @@ public class YelpDBServer {
     public void serve() throws IOException {
 	while (true) {
 	    // block until a client connects
+	    System.out.println("we blocking?");
 	    final Socket socket = serverSocket.accept();			// TODO 
+	    
 	    // create a new thread to handle that client
 	    Thread handler = new Thread(new Runnable() {
 		public void run() {

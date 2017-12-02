@@ -2,6 +2,7 @@ package ca.ubc.ece.cpen221.mp5.tests;
 
 import static org.junit.Assert.*;
 
+import java.io.FileNotFoundException;
 import java.util.Set;
 
 import ca.ece.ubc.cpen221.mp5.database.YelpDatabase;
@@ -239,4 +240,5 @@ public class DatabaseTests {
 		Set<YelpRestaurant> filteredRestaurants = fc.getQueryRestaurants();
 		assertTrue(filteredRestaurants == null);
 	}
+		
 }

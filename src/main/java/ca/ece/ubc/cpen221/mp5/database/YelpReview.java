@@ -50,55 +50,69 @@ public class YelpReview implements Review {
 			this.votes.put(category, votes.get(category));
 		}
 	}
+
 	/**
 	 * Gets userID
+	 * 
 	 * @return userID
 	 */
 	@Override
 	public String getUserId() {
 		return userId;
 	}
+
 	/**
 	 * Gets date
+	 * 
 	 * @return dates
 	 */
 	@Override
 	public String getDate() {
 		return date;
 	}
+
 	/**
 	 * Gets text
+	 * 
 	 * @return text
 	 */
 	@Override
 	public String getText() {
 		return text;
 	}
-	/** Modifiers
-	 * Updates text
-	 * @param text to be updated with
+
+	/**
+	 * Modifiers Updates text
+	 * 
+	 * @param text
+	 *            to be updated with
 	 */
 	@Override
 	public void updateText(String text) {
 		this.text = text;
 	}
 
-	/**Getters
-	 * Gets type
+	/**
+	 * Getters Gets type
+	 * 
 	 * @return type
 	 */
 	public String getType() {
 		return type;
 	}
+
 	/**
 	 * Gets businessId
+	 * 
 	 * @return businessId
 	 */
 	public String getBusinessId() {
 		return businessId;
 	}
+
 	/**
 	 * Gets map of votes
+	 * 
 	 * @return map containing votes
 	 */
 	public Map<String, Integer> getVotes() {
@@ -109,15 +123,19 @@ public class YelpReview implements Review {
 		}
 		return votesCopy;
 	}
+
 	/**
 	 * Gets review ID
+	 * 
 	 * @return reviewID
 	 */
 	public String getReviewId() {
 		return reviewId;
 	}
+
 	/**
 	 * Gets stars
+	 * 
 	 * @return stars
 	 */
 	public double getStars() {

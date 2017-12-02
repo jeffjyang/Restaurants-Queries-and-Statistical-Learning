@@ -716,7 +716,7 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		} 
 	}
 
 	/**

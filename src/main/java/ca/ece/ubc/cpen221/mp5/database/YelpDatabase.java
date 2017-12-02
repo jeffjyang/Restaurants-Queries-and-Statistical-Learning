@@ -13,9 +13,12 @@ import java.util.function.ToDoubleBiFunction;
 
 import javax.json.*;
 
+import org.antlr.v4.runtime.ANTLRErrorListener;
+import org.antlr.v4.runtime.BailErrorStrategy;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.ConsoleErrorListener;
 import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
@@ -72,19 +75,84 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 	 */
 	@Override
 	public Set<YelpRestaurant> getMatches(String queryString) {
-		queryString = replaceWhiteSpace(queryString);
-		CharStream stream = CharStreams.fromString(queryString);
-		QueryLexer lexer = new QueryLexer(stream);
-		TokenStream tokens = new CommonTokenStream(lexer);
-		QueryParser parser = new QueryParser(tokens);
-		ParseTree tree = parser.root();
-		ParseTreeWalker walker = new ParseTreeWalker();
-		// QueryListener listener = new QueryListenerPrintEverything();
-		QueryListenerFilterCreator listener = new QueryListenerFilterCreator(restaurants);
-		walker.walk(listener, tree);
-		Set<YelpRestaurant> queryRestaurants = listener.getQueryRestaurants();
+		Set<YelpRestaurant> queryRestaurants;
+		if (!(queryString.contains("rating") | queryString.contains("in(") |
+			queryString.contains("price")| queryString.contains("category(") | 
+			queryString.contains("name"))) {
+			return null;
+		}
+			queryString = replaceWhiteSpace(queryString);
+			CharStream stream = CharStreams.fromString(queryString);
+			QueryLexer lexer = new QueryLexer(stream);
+			TokenStream tokens = new CommonTokenStream(lexer);
+			System.out.println(tokens.size());
+			QueryParser parser = new QueryParser(tokens);
+			parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
+			lexer.removeErrorListener(ConsoleErrorListener.INSTANCE);
+			ParseTree tree = parser.root();
+			ParseTreeWalker walker = new ParseTreeWalker();
+			// QueryListener listener = new QueryListenerPrintEverything();
+			QueryListenerFilterCreator listener = new QueryListenerFilterCreator(restaurants);
+			walker.walk(listener, tree);
+			queryRestaurants = listener.getQueryRestaurants();
+		//} 
 		// System.out.println(queryRestaurants);
 		return queryRestaurants; // Returns null if invalid query
+	}
+
+	/**
+	 * Performs k-mean clustering on the Restaurant list based on distance
+	 * 
+	 * @param int
+	 *            k indicating how many clusters to be made
+	 * @return JSONString of list of clusters
+	 */
+
+	@Override
+	public String kMeansClusters_json(int k) {
+		boolean flag = false; // Flag to indicate if cluster contains empty clusters
+		List<Set<YelpRestaurant>> clusterList;// = new ArrayList<>();
+		String clusterJson;
+		// ArrayList<Coordinate> seeds = new ArrayList<>();
+
+		do {
+			flag = false;
+			// List<Set<YelpRestaurant>> clusterList = new ArrayList<>();
+			clusterList = new ArrayList<>();
+			ArrayList<Coordinate> seeds = new ArrayList<>();
+			seeds = initializeSeeds(k);
+			// String clusterJson;
+
+			// Initializing all the cluster sets
+			for (int index = 0; index < k; index++) {
+				Set<YelpRestaurant> cluster = new HashSet<>();
+				clusterList.add(cluster);
+			}
+
+			// Adding the restaurant to the cluster listing
+			for (YelpRestaurant restaurant : restaurants) {
+				int bestSeed = bestCluster(restaurant, seeds);
+				clusterList.get(bestSeed).add(restaurant);
+			}
+
+			List<Set<YelpRestaurant>> oldClusterList = new ArrayList<>();
+
+			while (!oldClusterList.equals(clusterList)) {
+				oldClusterList = clusterList;
+				// System.out.println("efwfewf" + clusterList.size());
+				seeds = centroidUpdate(clusterList); // Updating the seedList with new centroids
+				clusterList = clusterUpdate(clusterList, seeds); // Updating the clusterList with the new centroids
+				if (clusterList == null) {
+					flag = true;
+					break;
+				}
+			}
+			// System.out.println("how many times");
+		} while (flag == true);
+
+		clusterJson = getJsonString(clusterList);
+
+		return clusterJson;
 	}
 
 	@Override
@@ -343,53 +411,6 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 
 	}
 
-	@Override
-	public String kMeansClusters_json(int k) {
-		boolean flag = false;
-		List<Set<YelpRestaurant>> clusterList;// = new ArrayList<>();
-		String clusterJson;
-		// ArrayList<Coordinate> seeds = new ArrayList<>();
-
-		do {
-			flag = false;
-			// List<Set<YelpRestaurant>> clusterList = new ArrayList<>();
-			clusterList = new ArrayList<>();
-			ArrayList<Coordinate> seeds = new ArrayList<>();
-			seeds = initializeSeeds(k);
-			// String clusterJson;
-
-			// Initializing all the cluster sets
-			for (int index = 0; index < k; index++) {
-				Set<YelpRestaurant> cluster = new HashSet<>();
-				clusterList.add(cluster);
-			}
-
-			// Adding the restaurant to the cluster listing
-			for (YelpRestaurant restaurant : restaurants) {
-				int bestSeed = bestCluster(restaurant, seeds);
-				clusterList.get(bestSeed).add(restaurant);
-			}
-
-			List<Set<YelpRestaurant>> oldClusterList = new ArrayList<>();
-
-			while (!oldClusterList.equals(clusterList)) {
-				oldClusterList = clusterList;
-				// System.out.println("efwfewf" + clusterList.size());
-				seeds = centroidUpdate(clusterList); // Updating the seedList with new centroids
-				clusterList = clusterUpdate(clusterList, seeds); // Updating the clusterList with the new centroids
-				if (clusterList == null) {
-					flag = true;
-					break;
-				}
-			}
-			// System.out.println("how many times");
-		} while (flag == true);
-
-		clusterJson = getJsonString(clusterList);
-
-		return clusterJson;
-	}
-
 	private String getJsonString(List<Set<YelpRestaurant>> clusterList) {
 		Set<JsonObject> set = new HashSet<>();
 		JsonArrayBuilder builder = Json.createArrayBuilder();
@@ -417,6 +438,15 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 
 	}
 
+	/**
+	 * Updates the cluster list by averaging the cluster node coordinates
+	 * 
+	 * @param clusterList
+	 *            List of cluster sets containing restaurants
+	 * @param seeds
+	 *            Coordinates of the current seeds
+	 * @return new clusterList using the updated averaged centroids
+	 */
 	private List<Set<YelpRestaurant>> clusterUpdate(List<Set<YelpRestaurant>> clusterList,
 			ArrayList<Coordinate> seeds) {
 		List<Set<YelpRestaurant>> newClusterList = new ArrayList<>();
@@ -439,8 +469,14 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 		return newClusterList;
 	}
 
-	// Calculates the mean of all data points assigned to each cluster and updates
-	// accordingly
+	/**
+	 * Updates the centroid list by averaging out all data point coordinates for
+	 * each individual cluster
+	 * 
+	 * @param clusterList
+	 *            List containing all sets of YelpRestaurants
+	 * @return newClusterList containing the updated centroid list coordinates
+	 */
 	private ArrayList<Coordinate> centroidUpdate(List<Set<YelpRestaurant>> clusterList) {
 		ArrayList<Coordinate> newSeeds = new ArrayList<>(); // Copy safety
 
@@ -453,7 +489,13 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 		return newSeeds;
 	}
 
-	// Calculates centroids for each cluster
+	/**
+	 * Calculates the coordinates of the averaged out cluster data point
+	 * 
+	 * @param cluster
+	 *            Set containing all YelpRestaurants in the cluster
+	 * @return Coordinate of the averaged out cluster data
+	 */
 	private Coordinate calculateCentroid(Set<YelpRestaurant> cluster) {
 		double sumLat = 0;
 		double sumLong = 0;
@@ -473,6 +515,16 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 		return newCentroid;
 	}
 
+	/**
+	 * Returns the integer corresponding to the best cluster from the given
+	 * restaurant
+	 * 
+	 * @param restaurant
+	 *            to compare clusters with
+	 * @param seeds
+	 *            List of Coordinates of the clusters
+	 * @return Integer corresponding to best cluster for the restaurant
+	 */
 	private int bestCluster(YelpRestaurant restaurant, ArrayList<Coordinate> seeds) {
 		Coordinate restaurantCoord = new Coordinate(restaurant);
 		double minDist = Integer.MAX_VALUE; // Should be something else...
@@ -491,6 +543,15 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 		return bestSeed;
 	}
 
+	/**
+	 * Returns the euclidean distance between two coordinates
+	 * 
+	 * @param clusterCoord
+	 *            Coordinate off the cluster centroid
+	 * @param restaurantCoord
+	 *            Coordinate of the restaurant to be compared with
+	 * @return distance between the two coordinates
+	 */
 	private double computeDistance(Coordinate clusterCoord, Coordinate restaurantCoord) {
 		double yDist = clusterCoord.getLat() - restaurantCoord.getLat();
 		double xDist = clusterCoord.getLong() - restaurantCoord.getLong();
@@ -499,6 +560,14 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 		return distance;
 	}
 
+	/**
+	 * Randomizes seed locations by pulling random centroid locations from the
+	 * restaurantList Outputs k number of seeds
+	 * 
+	 * @param k
+	 *            number of seeds to be generated
+	 * @return ArrayList<Coordinate> corresponding to the randomized seed locations
+	 */
 	private ArrayList<Coordinate> initializeSeeds(int k) {
 
 		Random randomGenerator = new Random();
@@ -519,6 +588,13 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 
 	}
 
+	/**
+	 * Parses the JSON value for the restaurants and constructs new YelpRestaurant
+	 * for each restaurant within the JSON array
+	 * 
+	 * @param jsonDir
+	 *            location where JSON data can be found
+	 */
 	private void parseJsonRestaurant(String jsonDir) {
 		InputStream is;
 
@@ -547,6 +623,13 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 		}
 	}
 
+	/**
+	 * Parses the JSON value for the users and constructs new YelpUser for each user
+	 * within the JSON array
+	 * 
+	 * @param jsonDir
+	 *            location where JSON data can be found
+	 */
 	private void parseJsonUsers(String jsonDir) {
 		InputStream is;
 
@@ -575,6 +658,13 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 		}
 	}
 
+	/**
+	 * Parses the JSON value for the reviews and constructs new YelpReview for each
+	 * review within the JSON array
+	 * 
+	 * @param jsonDir
+	 *            location where JSON data can be found
+	 */
 	private void parseJsonReviews(String jsonDir) {
 		InputStream is;
 
@@ -603,6 +693,13 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 		}
 	}
 
+	/**
+	 * Replaces the whitespace within brackets with underscore
+	 * 
+	 * @param query
+	 *            data to replace whitespace for
+	 * @return String containing query with spaces replaced for underscores
+	 */
 	private static String replaceWhiteSpace(String query) {
 		boolean openBracket = false;
 		char[] queryArray = query.toCharArray();
@@ -618,5 +715,4 @@ public class YelpDatabase implements MP5Db<YelpRestaurant> {
 		}
 		return String.valueOf(queryArray);
 	}
-
 }

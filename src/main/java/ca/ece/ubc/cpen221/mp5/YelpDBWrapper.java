@@ -282,8 +282,13 @@ public class YelpDBWrapper {
     }
 
     public synchronized String getQuery(String query) {
-	Set<YelpRestaurant> restaurantMatches = database.getMatches(query);
-
+	Set<YelpRestaurant> restaurantMatches;
+	try {
+	    restaurantMatches = database.getMatches(query);
+	} catch (Exception e) {
+	    return getQueryInvalidErr;
+	}
+	
 	if (restaurantMatches == null) {
 	    return getQueryInvalidErr;
 	}

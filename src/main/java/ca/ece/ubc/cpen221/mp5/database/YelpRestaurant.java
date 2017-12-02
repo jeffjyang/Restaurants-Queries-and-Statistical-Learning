@@ -64,21 +64,21 @@ public class YelpRestaurant implements Business{
 	JsonArray neighborhoodJson = obj.getJsonArray("neighborhoods");
 	if (neighborhoodJson != null) {
 	    for (int index = 0; index < neighborhoodJson.size(); index++) {
-	    	this.neighborhoods.add(neighborhoodJson.get(index).toString());
+	    	this.neighborhoods.add(neighborhoodJson.get(index).toString().replace("\"", ""));
 	    }
 	}
 
 	JsonArray schoolsJson = obj.getJsonArray("schools");
 	if (schoolsJson != null) {
 	    for (int index = 0; index < schoolsJson.size(); index++) {
-	    	this.schools.add(schoolsJson.get(index).toString());
+	    	this.schools.add(schoolsJson.get(index).toString().replace("\"", ""));
 	    }
 	}
 
 	JsonArray categoriesJson = obj.getJsonArray("categories");
 	if (categoriesJson != null) {
 	    for (int index = 0; index < categoriesJson.size(); index++) {
-	    	this.categories.add(categoriesJson.get(index).toString());
+	    	this.categories.add(categoriesJson.get(index).toString().replace("\"", ""));
 	    }
 	}
 
@@ -90,6 +90,7 @@ public class YelpRestaurant implements Business{
 	JsonArrayBuilder neighborhoodsJsonBuilder = Json.createArrayBuilder();
 	for (String neighborhood : neighborhoods) {
 	    neighborhoodsJsonBuilder.add(neighborhood);
+	    System.out.println(neighborhood);
 	}
 	JsonArray neighborhoodsJson = neighborhoodsJsonBuilder.build();
 	
@@ -113,14 +114,14 @@ public class YelpRestaurant implements Business{
 		.add("neighborhoods", neighborhoodsJson)//.toString())
 		.add("business_id", this.businessId) //TODO: What is cluster weight?
 		.add("name", this.name) 
-		.add("categories", categoriesJson.toString()) 
+		.add("categories", categoriesJson) 
 		.add("state", this.state) 
 		.add("type", this.type) 
 		.add("city", this.city)
 		.add("full_address", this.fullAddress)
 		.add("review_count", this.reviewCount)
 		.add("photo_url", this.photoUrl)
-		.add("schools", schoolsJson.toString())
+		.add("schools", schoolsJson)
 		.add("latitude", this.latitude)
 		.add("price", this.price)
 		.build();

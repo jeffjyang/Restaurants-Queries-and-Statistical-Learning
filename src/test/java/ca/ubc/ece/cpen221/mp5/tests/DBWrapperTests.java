@@ -40,19 +40,27 @@ public class DBWrapperTests {
     @Test
     public void test01() {
 	YelpDBWrapper database = YelpDBWrapper.getInstance();
+	
 	String restaurantError = database.getRestaurant("not a busines id");
-
 	assertEquals(restaurantNotExistErr, restaurantError);
+	
 	String validRestaurant = database.getRestaurant("BJKIoQa5N2T_oDlLVf467Q");
-
-	assertEquals("{\"open\": true, \"url\": \"http://www.yelp.com/biz/jasmine-thai-berkeley\", "
-		+ "\"longitude\": -122.2602981, \"neighborhoods\": [\"UC Campus Area\"], \"business_id\": "
-		+ "\"BJKIoQa5N2T_oDlLVf467Q\", \"name\": \"Jasmine Thai\", \"categories\": [\"Thai\", \"Restaurants\"], "
-		+ "\"state\": \"CA\", \"type\": \"business\", \"stars\": 3.0, \"city\": \"Berkeley\", \"full_address\": "
-		+ "\"1805 Euclid Ave\\nUC Campus Area\\nBerkeley, CA 94709\", \"review_count\": 52, \"photo_url\": "
-		+ "\"http://s3-media2.ak.yelpcdn.com/bphoto/ZwTUUb-6jkuzMDBBsUV6Eg/ms.jpg\", \"schools\": "
-		+ "[\"University of California at Berkeley\"], \"latitude\": 37.8759615, \"price\": 2}",
-		validRestaurant);
+	InputStream is = new ByteArrayInputStream(validRestaurant.getBytes());
+	JsonReader reader = Json.createReader(is);
+	JsonObject restaurantJson = null;
+	try {
+	    restaurantJson = reader.readObject();
+	} catch (Exception e) {
+	    fail();
+	}
+	
+	try {
+	    if (!"Jasmine Thai".equals(restaurantJson.getString("name"))) {
+		fail();
+	    }
+	} catch (Exception e) {
+	    fail();
+	}
 
 
     }
@@ -337,6 +345,9 @@ public class DBWrapperTests {
 	
 	String noResultQuery = "in(Telegraph Ave) && (category(Chinese) && category(Italian)) && price >= 3";
 	assertEquals(getQueryMatchErr, database.getQuery(noResultQuery));
+	
+	String invalidQuery2 = "in(Telegraph Ave) && (category(Chinese) && category(Italian)) && price >= 7";
+	assertEquals(getQueryInvalidErr, database.getQuery(invalidQuery2));
 	
     }
 
